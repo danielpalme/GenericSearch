@@ -1,0 +1,46 @@
+﻿@model GenericSearch.UI.Models.HomeModel
+
+<h1>GenericSearch</h1>
+<br />
+@using (Html.BeginForm())
+{
+    <div id="tabs" data-selectedindex="@this.Model.SelectedTab">
+        <ul>
+            <li><a href="#tabs-1"><em>Default</em> Search Criteria</a></li>
+            <li><a href="#tabs-2"><em>Custom</em> Search Criteria</a></li>
+        </ul>
+        <div id="tabs-1">
+            @Html.EditorFor(m => m.SearchCriteria)
+            <br />
+            <input type="submit" name="default" value="Apply filters" />
+            <br /><br />
+            @{
+                var grid1 = new WebGrid(this.Model.Data);
+                @grid1.GetHtml(columns: grid1.Columns(
+                    grid1.Column("Date"),
+                    grid1.Column("DateNullable"),
+                    grid1.Column("Integer"),
+                    grid1.Column("IntegerNullable"),
+                    grid1.Column("MyEnum"),
+                    grid1.Column("Text")));
+            }
+        </div>
+        <div id="tabs-2">
+            @Html.EditorFor(m => m.SearchCriteriaNested)
+            <br />
+            <input type="submit" name="custom" value="Apply filters" />
+            <br /><br />
+            @{
+                var grid2 = new WebGrid(this.Model.DataNested);
+                @grid2.GetHtml(columns: grid2.Columns(
+                    grid2.Column("Date"),
+                    grid2.Column("DateNullable"),
+                    grid2.Column("Integer"),
+                    grid2.Column("IntegerNullable"),
+                    grid2.Column("MyEnum"),
+                    grid2.Column("Text"),
+                    grid1.Column("TextNested")));
+            }
+        </div>
+    </div>
+}

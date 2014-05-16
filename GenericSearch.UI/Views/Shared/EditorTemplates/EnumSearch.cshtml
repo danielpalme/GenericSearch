@@ -1,0 +1,35 @@
+﻿@model GenericSearch.Core.EnumSearch
+
+@{
+    var enumMembers = Enum.GetValues(this.Model.EnumType);
+    string[] enumNames = Enum.GetNames(this.Model.EnumType);
+    SelectListItem[] items = new SelectListItem[enumNames.Length + 1];
+    items[0] = new SelectListItem()
+    {
+        Text = "-",
+        Value = string.Empty
+    };
+
+    for (int i = 0; i < enumNames.Length; i++)
+    {
+        var display = this.Model.EnumType.GetMember(enumNames[i])[0].GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), true).Cast<System.ComponentModel.DataAnnotations.DisplayAttribute>().FirstOrDefault();
+        if (display != null)
+        {
+            enumNames[i] = display.Name;
+        }
+
+        items[i + 1] = new SelectListItem()
+        {
+            Text = enumNames[i],
+            Value = enumMembers.GetValue(i).ToString()
+        };
+    }
+}
+
+@Html.LabelFor(m => m.SearchTerm, this.Model.LabelText)
+@Html.DropDownListFor(m => m.SearchTerm, items, new { style = "margin-left: 150px; width: 204px" })
+@Html.HiddenFor(m => m.Property)
+@Html.HiddenFor(m => m.EnumTypeName)
+@Html.HiddenFor(m => m.TargetTypeName)
+@Html.Hidden("ModelTypeName", this.Model.GetType().AssemblyQualifiedName)
+<br />
