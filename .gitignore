@@ -1,3 +1,11 @@
+packages/Antlr*
+packages/Microsoft*
+packages/Modernizr*
+packages/Newtonsoft*
+packages/Respond*
+packages/WebGrease*
+packages/bootstrap*
+packages/jQuery*
 *.suo
 *.user
 *.Cache
