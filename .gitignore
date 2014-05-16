@@ -1,7 +1,5 @@
-/packages/LibGit2Sharp*
-/target
 *.suo
 *.user
 *.Cache
-bin
 obj
+bin

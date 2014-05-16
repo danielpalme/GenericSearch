@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Palmmedia")]
 [assembly: AssemblyProduct("GenericSearch")]
-[assembly: AssemblyCopyright("Copyright © Palmmedia 2012")]
+[assembly: AssemblyCopyright("Copyright © Palmmedia 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9ee1448d-5548-458e-9f78-22ccf809ddf0")]
+[assembly: Guid("f58835c1-494c-42fc-b247-94e5bac22910")]
 
 // Version information for an assembly consists of the following four values:
 //

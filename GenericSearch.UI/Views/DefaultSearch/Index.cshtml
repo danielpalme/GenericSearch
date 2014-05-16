@@ -1,0 +1,38 @@
+﻿@model GenericSearch.UI.Models.SearchViewModel
+
+@{
+    ViewBag.Title = "Default Search Criteria";
+}
+
+<div class="row">
+    @using (Html.BeginForm("Index", "DefaultSearch", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.EditorFor(m => m.SearchCriteria)
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Apply filters</button>
+            </div>
+        </div>
+    }
+    <hr/>
+</div>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead><tr><th>Date</th><th>DateNullable</th><th>Integer</th><th>IntegerNullable</th><th>MyEnum</th></tr></thead>
+        <tbody>
+            @{
+                foreach (var item in this.Model.Data)
+                {
+                    <tr>
+                        <td>@item.Date</td>
+                        <td>@item.DateNullable</td>
+                        <td>@item.Integer</td>
+                        <td>@item.IntegerNullable</td>
+                        <td>@item.MyEnum</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
