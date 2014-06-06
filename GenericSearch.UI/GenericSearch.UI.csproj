@@ -116,12 +116,15 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\PagedSearchController.cs" />
     <Compile Include="Controllers\CustomSearchController.cs" />
     <Compile Include="Controllers\DefaultSearchController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\PagedSearchViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
+    <Compile Include="PagingHtmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +171,7 @@
     <Content Include="Views\Shared\EditorTemplates\NumericSearch.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TextSearch.cshtml" />
     <Content Include="Views\CustomSearch\Index.cshtml" />
+    <Content Include="Views\PagedSearch\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GenericSearch.Core\GenericSearch.Core.csproj">
@@ -177,6 +181,10 @@
     <ProjectReference Include="..\GenericSearch.Data\GenericSearch.Data.csproj">
       <Project>{5f3c5071-6911-46bf-a1e2-a41d2b77c9d6}</Project>
       <Name>GenericSearch.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GenericSearch.Paging\GenericSearch.Paging.csproj">
+      <Project>{e432ef20-3b14-40b6-8278-bdf9be9ddcf2}</Project>
+      <Name>GenericSearch.Paging</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
