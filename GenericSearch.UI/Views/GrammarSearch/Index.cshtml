@@ -1,0 +1,58 @@
+﻿@model GenericSearch.UI.Models.GrammarSearchViewModel
+
+@{
+    ViewBag.Title = "Grammar Search";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Grammar</h3>
+    </div>
+    <div class="panel-body">
+        You can use the following operators:
+        <ul>
+            <li>' ', 'and', '&': Searches for <strong>all</strong> keywords.<br><strong>Sample</strong>: <i>ab & ef</i></li>
+            <li>'or', '|': Searches for <strong>one of</strong> the keywords.<br><strong>Sample</strong>: <i>ab or ef</i></li>
+            <li>'not', '-': Exclude keyword form search<br><strong>Sample</strong>: <i>not ab</i></li>
+            <li>'( ... )': Brackets can be used to specify precedence.<br><strong>Sample</strong>: <i>ab and (cd or kl)</i></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    @using (Html.BeginForm("Index", "GrammarSearch", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.SearchTerm, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-2">
+                @Html.EditorFor(m => m.SearchTerm)
+            </div>
+            <div class="col-sm-8">
+                @Html.ValidationMessageFor(m => m.SearchTerm)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Apply filters</button>
+            </div>
+        </div>
+    }
+    <hr />
+</div>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead><tr><th>Text</th></tr></thead>
+        <tbody>
+            @{
+                foreach (var item in this.Model.Data)
+                {
+                    <tr>
+                        <td>@item.Text</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

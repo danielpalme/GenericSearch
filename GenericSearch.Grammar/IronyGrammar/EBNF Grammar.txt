@@ -1,0 +1,14 @@
+﻿OrExpression ::= AndExpression
+                 | OrExpression ( 'or' ) AndExpression
+
+AndExpression ::= PrimaryExpression
+                  | AndExpression { 'and' } PrimaryExpression
+
+PrimaryExpression ::= Term
+                      | '-' Term
+                      | Phrase
+                      | '(' OrExpression ')'
+
+Term ::= ('A'...'Z'|'0'...'9'|'!'|'@'|'#'|'$'|'%'|'^'|'*'|'_'|'’'|'.'|'?')+
+
+Phrase ::= '"' (string characters)+ '"'
