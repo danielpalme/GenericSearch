@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Document.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchExtensions_TestBase.cs" />
     <Compile Include="SearchExtensions_AntlrTest.cs" />
     <Compile Include="SearchExtensions_IronyTest.cs" />
   </ItemGroup>
