@@ -25,6 +25,15 @@ namespace GenericSearch.Grammar.Test
             }
             .AsQueryable();
 
+        private readonly IQueryable<Document> sampleInputSpecialCharacters = new[]
+            {
+                new Document() { Title = "oneü" },
+                new Document() { Title = "one twoü" },
+                new Document() { Title = "one two threeß" },
+                new Document() { Title = "one two three fourß" }
+            }
+         .AsQueryable();
+
         protected SearchExtensions_TestBase(Func<IQueryable<Document>, Expression<Func<Document, string>>, string, IQueryable<Document>> filter)
         {
             this.filter = filter;
@@ -58,6 +67,17 @@ namespace GenericSearch.Grammar.Test
         public void GetMatches_InvalidSearchTerm_ThrowsArgumentNullException()
         {
             var matches = this.filter(sampleInput, d => d.Title, "(Test and Test").ToArray();
+        }
+
+        [TestMethod]
+        public void GetMatches_SearchTermWithUmlaut_CorrectElementsReturned()
+        {
+            var matches = this.filter(sampleInputSpecialCharacters, d => d.Title, "ü").ToArray();
+
+            Assert.AreEqual(2, matches.Length);
+
+            matches = this.filter(sampleInputSpecialCharacters, d=> d.Title, "ß").ToArray();
+            Assert.AreEqual(2, matches.Length);
         }
 
         [TestMethod]
