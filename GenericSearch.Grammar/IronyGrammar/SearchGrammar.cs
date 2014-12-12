@@ -2,7 +2,7 @@
 
 namespace GenericSearch.Grammar.IronyGrammar
 {
-    [Language("Liebherr Search", "1.0", "A search grammar for Liebherr")]
+    [Language("Search Grammar", "1.0", "A search grammar")]
     public class SearchGrammar : Irony.Parsing.Grammar
     {
         public SearchGrammar()
@@ -12,7 +12,7 @@ namespace GenericSearch.Grammar.IronyGrammar
             var term = new IdentifierTerminal(
                 "Term",
                 "!@#$%^*_'.?",
-                "!@#$%^*_'.?0123456789");
+                "!@#$%^*_'.?0123456789üöäÜÖÄß");
 
             term.Priority = TerminalPriority.Low;
             var phrase = new StringLiteral("Phrase", "\"");
