@@ -32,8 +32,7 @@ namespace GenericSearch.UI.Controllers
             var model = new PagedSearchViewModel()
             {
                 Data = data,
-                SearchCriteria = typeof(GenericSearch.Data.SomeClass)
-                    .GetDefaultSearchCriterias()
+                SearchCriteria = searchCriteria
             };
 
             return View(model);

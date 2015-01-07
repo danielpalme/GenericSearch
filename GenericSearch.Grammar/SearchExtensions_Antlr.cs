@@ -3,159 +3,87 @@ using System.Linq;
 using System.Linq.Expressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using GenericSearch.Common;
 using GenericSearch.Grammar.AntlrGrammar;
 
 namespace GenericSearch.Grammar
 {
     public static class SearchExtensions_Antlr
     {
-        public static IQueryable<T> FilterUsingAntlr<T>(
+        public static SearchResult<T> FilterUsingAntlr<T>(
             this IQueryable<T> query,
-            Expression<Func<T, string>> property,
-            string searchTerm)
+            string queryString,
+            params Expression<Func<T, string>>[] properties)
         {
             if (query == null)
             {
                 throw new ArgumentNullException("query");
             }
 
-            if (property == null)
+            if (properties == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException("properties");
             }
 
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            if (properties.Length == 0)
             {
-                return query;
+                throw new ArgumentException("At least one property is expected", "properties");
             }
 
-            AntlrInputStream input = new AntlrInputStream(searchTerm);
+            if (string.IsNullOrWhiteSpace(queryString))
+            {
+                return new SearchResult<T>(query, Enumerable.Empty<string>());
+            }
+
+            AntlrInputStream input = new AntlrInputStream(queryString);
             SearchGrammarLexer lexer = new SearchGrammarLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             SearchGrammarParser parser = new SearchGrammarParser(tokens);
             IParseTree parseTree = parser.prog();
 
-            LambdaExpression lambda = property as LambdaExpression;
-            var arg = lambda.Parameters[0];
-            var propertyMemberExpression = lambda.Body as MemberExpression;
+            var arg = Expression.Parameter(typeof(T), "p");
+            MemberExpression[] memberExpressions = new MemberExpression[properties.Length];
 
-            if (propertyMemberExpression == null)
+            for (int i = 0; i < properties.Length; i++)
             {
-                throw new ArgumentException(
-                    "Please provide property member expression like 'o => o.Name'",
-                    "property");
-            }
+                var propertyMemberExpression = properties[i].Body as MemberExpression;
 
-            ExpressionBuilderVisitor visitor = new ExpressionBuilderVisitor(propertyMemberExpression);
-            var searchExpression = visitor.Visit(parseTree);
-
-            var searchPredicate = Expression.Lambda<Func<T, bool>>(searchExpression, arg);
-
-            return query
-                .Where(searchPredicate);
-        }
-
-        private class ExpressionBuilderVisitor : SearchGrammarBaseVisitor<Expression>
-        {
-            private readonly MemberExpression property;
-
-            public ExpressionBuilderVisitor(MemberExpression property)
-            {
-                if (property == null)
+                if (propertyMemberExpression == null)
                 {
-                    throw new ArgumentNullException("property");
+                    throw new ArgumentException(
+                        "The " + i + "th property is invalid. Please provide property member expression like 'o => o.Name'",
+                        "properties");
                 }
 
-                this.property = property;
+                string propertyString = propertyMemberExpression.ToString();
+                string name = propertyString.Substring(propertyString.IndexOf('.') + 1);
+
+                memberExpressions[i] = Expression.Property(arg, name);
             }
 
-            public override Expression VisitOrExpression(SearchGrammarParser.OrExpressionContext context)
+#if DEBUG
+            string treeText = new StringBuilderVisitor().Visit(parseTree);
+            System.Diagnostics.Trace.WriteLine(treeText);
+#endif
+
+            GrammarResult searchResult = null;
+
+            try
             {
-                if (context.ChildCount == 1)
-                {
-                    return base.VisitOrExpression(context);
-                }
-                else
-                {
-                    return Expression.OrElse(
-                        base.Visit(context.children[0]),
-                        base.Visit(context.children[2]));
-                }
+                ExpressionBuilderVisitor visitor = new ExpressionBuilderVisitor(memberExpressions);
+                searchResult = visitor.Visit(parseTree);
             }
-
-            public override Expression VisitAndExpression(SearchGrammarParser.AndExpressionContext context)
+            catch (InvalidSearchException)
             {
-                if (context.ChildCount == 1)
-                {
-                    return base.VisitAndExpression(context);
-                }
-                else if (context.ChildCount == 2)
-                {
-                    return Expression.AndAlso(
-                        base.Visit(context.children[0]),
-                        base.Visit(context.children[1]));
-                }
-                else
-                {
-                    return Expression.AndAlso(
-                        base.Visit(context.children[0]),
-                        base.Visit(context.children[2]));
-                }
+                string failedTreeText = new StringBuilderVisitor().Visit(parseTree);
+                System.Diagnostics.Trace.WriteLine("Failed to parse search grammar '" + queryString + "': \r\n" + failedTreeText);
+
+                throw;
             }
 
-            public override Expression VisitParenthesizedExpression(SearchGrammarParser.ParenthesizedExpressionContext context)
-            {
-                base.Visit(context.children[0]);
-                base.Visit(context.children[2]);
+            var searchPredicate = Expression.Lambda<Func<T, bool>>(searchResult.Expression, arg);
 
-                return base.Visit(context.children[1]);
-            }
-
-            public override Expression VisitTerminal(ITerminalNode node)
-            {
-                return this.CreateTextExpression(node.GetText());
-            }
-
-            public override Expression VisitPhraseExpression(SearchGrammarParser.PhraseExpressionContext context)
-            {
-                base.Visit(context.children[0]);
-                base.Visit(context.children[context.ChildCount - 1]);
-
-                string searchTerm = string.Join(
-                    " ",
-                    context.children
-                        .Skip(1)
-                        .Take(context.ChildCount - 2)
-                        .Select(c => c.GetText()));
-
-                return this.CreateTextExpression(searchTerm);
-            }
-
-            public override Expression VisitNegatedExpression(SearchGrammarParser.NegatedExpressionContext context)
-            {
-                var childExpression = base.VisitNegatedExpression(context);
-                return Expression.Not(childExpression);
-            }
-
-            public override Expression VisitErrorNode(IErrorNode node)
-            {
-                throw new InvalidSearchException("The search term is invalid:\r\n" + node);
-            }
-
-            private Expression CreateTextExpression(string searchTerm)
-            {
-                var nullCheckExpression = Expression.NotEqual(this.property, Expression.Constant(null));
-
-                var searchExpression = Expression.GreaterThan(
-                    Expression.Call(
-                        this.property,
-                        typeof(string).GetMethod("IndexOf", new[] { typeof(string), typeof(StringComparison) }),
-                        Expression.Constant(searchTerm),
-                        Expression.Constant(StringComparison.CurrentCultureIgnoreCase)),
-                    Expression.Constant(-1));
-
-                return Expression.AndAlso(nullCheckExpression, searchExpression);
-            }
+            return new SearchResult<T>(query.Where(searchPredicate), searchResult.Terms);
         }
     }
 }

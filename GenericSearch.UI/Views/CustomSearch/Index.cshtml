@@ -30,8 +30,8 @@
                         <td>@item.Integer</td>
                         <td>@item.IntegerNullable</td>
                         <td>@item.MyEnum</td>
-                        <td>@item.Text</td>
-                        <td>@{if (item.Nested != null) {<text>@item.Nested.TextNested</text>}}</td>
+                        <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().First().SearchTerm)</td>
+                        <td>@{if (item.Nested != null) {<text>@item.Nested.TextNested.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(1).First().SearchTerm)</text>}}</td>
                     </tr>
                 }
             }

@@ -25,10 +25,20 @@
         <div class="form-group">
             @Html.LabelFor(m => m.SearchTerm, new { @class = "col-sm-2 control-label" })
             <div class="col-sm-2">
-                @Html.EditorFor(m => m.SearchTerm)
+                @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control" })
             </div>
             <div class="col-sm-8">
                 @Html.ValidationMessageFor(m => m.SearchTerm)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Grammar, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-2">
+                @Html.EnumDropDownListFor(m => m.Grammar, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-8">
+                @Html.ValidationMessageFor(m => m.Grammar)
             </div>
         </div>
 
@@ -41,6 +51,20 @@
     <hr />
 </div>
 
+@if (this.Model.Terms != null && this.Model.Terms.Any())
+{
+    string text = string.Join(", ", this.Model.Terms);
+    
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Terms</h3>
+        </div>
+        <div class="panel-body">
+            @text
+        </div>
+    </div>
+}
+
 <div class="row">
     <table class="table table-striped">
         <thead><tr><th>Text</th></tr></thead>
@@ -49,7 +73,7 @@
                 foreach (var item in this.Model.Data)
                 {
                     <tr>
-                        <td>@item.Text</td>
+                        <td>@item.Text.HighlightKeyWords(this.Model.Terms)</td>
                     </tr>
                 }
             }

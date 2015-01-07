@@ -1,7 +1,7 @@
 ﻿@model GenericSearch.UI.Models.PagedSearchViewModel
 
 @{
-    ViewBag.Title = "Default Search Criteria";
+    ViewBag.Title = "Paged Search";
 }
 
 <div class="row">
@@ -39,7 +39,7 @@
                         <td>@item.Integer</td>
                         <td>@item.IntegerNullable</td>
                         <td>@item.MyEnum</td>
-                        <td>@item.Text</td>
+                        <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Last().SearchTerm)</td>
                     </tr>
                 }
             }

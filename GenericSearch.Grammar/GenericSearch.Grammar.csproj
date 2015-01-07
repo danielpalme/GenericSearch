@@ -50,13 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntlrGrammar\ExpressionBuilderVisitor.cs" />
+    <Compile Include="AntlrGrammar\GrammarResult.cs" />
     <Compile Include="AntlrGrammar\SearchGrammar.g4.lexer.cs">
       <DependentUpon>SearchGrammar.g4</DependentUpon>
     </Compile>
     <Compile Include="AntlrGrammar\SearchGrammar.g4.parser.cs">
       <DependentUpon>SearchGrammar.g4</DependentUpon>
     </Compile>
-    <Compile Include="InvalidSearchException.cs" />
+    <Compile Include="AntlrGrammar\StringBuilderVisitor.cs" />
     <Compile Include="IronyGrammar\SearchGrammar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchExtensions_Antlr.cs" />
@@ -72,7 +74,12 @@
   <ItemGroup>
     <Content Include="IronyGrammar\EBNF Grammar.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GenericSearch.Common\GenericSearch.Common.csproj">
+      <Project>{d4ed5d8d-8aca-4e70-ae80-68e92d973098}</Project>
+      <Name>GenericSearch.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

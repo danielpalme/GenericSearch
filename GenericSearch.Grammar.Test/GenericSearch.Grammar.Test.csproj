@@ -52,15 +52,22 @@
   <ItemGroup>
     <Compile Include="Document.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchExtensions_TestBase.cs" />
     <Compile Include="SearchExtensions_AntlrTest.cs" />
     <Compile Include="SearchExtensions_IronyTest.cs" />
+    <Compile Include="SearchExtensions_TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GenericSearch.Common\GenericSearch.Common.csproj">
+      <Project>{d4ed5d8d-8aca-4e70-ae80-68e92d973098}</Project>
+      <Name>GenericSearch.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GenericSearch.Grammar\GenericSearch.Grammar.csproj">
       <Project>{5e61ee4f-9c1a-4bae-ae12-fd5c2f6b577a}</Project>
       <Name>GenericSearch.Grammar</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

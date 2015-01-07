@@ -126,6 +126,7 @@
     <Compile Include="Models\PagedSearchViewModel.cs" />
     <Compile Include="Models\GrammarSearchViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
+    <Compile Include="HighlightingHtmlHelper.cs" />
     <Compile Include="PagingHtmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -177,6 +178,10 @@
     <Content Include="Views\GrammarSearch\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GenericSearch.Common\GenericSearch.Common.csproj">
+      <Project>{d4ed5d8d-8aca-4e70-ae80-68e92d973098}</Project>
+      <Name>GenericSearch.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GenericSearch.Core\GenericSearch.Core.csproj">
       <Project>{1d2bdc73-fb11-4468-bcfc-884faf754a01}</Project>
       <Name>GenericSearch.Core</Name>

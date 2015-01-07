@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GenericSearch.Common;
 using GenericSearch.Grammar.IronyGrammar;
 using Irony.Parsing;
 
@@ -8,32 +10,38 @@ namespace GenericSearch.Grammar
 {
     public static class SearchExtensions_Irony
     {
-        public static IQueryable<T> FilterUsingIrony<T>(
+        public static SearchResult<T> FilterUsingIrony<T>(
             this IQueryable<T> query,
-            Expression<Func<T, string>> property,
-            string searchTerm)
+            string queryString,
+            params Expression<Func<T, string>>[] properties)
         {
             if (query == null)
             {
                 throw new ArgumentNullException("query");
             }
 
-            if (property == null)
+            if (properties == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException("properties");
             }
 
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            if (properties.Length == 0)
             {
-                return query;
+                throw new ArgumentException("At least one property is expected", "properties");
+            }
+
+            if (string.IsNullOrWhiteSpace(queryString))
+            {
+                return new SearchResult<T>(query, Enumerable.Empty<string>());
             }
 
             SearchGrammar searchGrammar = new SearchGrammar();
             Parser parser = new Parser(searchGrammar);
-            ParseTree parseTree = parser.Parse(searchTerm);
+            ParseTree parseTree = parser.Parse(queryString);
 
             if (parseTree.HasErrors() || parseTree.Root == null)
             {
+                System.Diagnostics.Trace.WriteLine("Failed to parse search grammar '" + queryString);
                 string errors = string.Join(
                     "\r\n",
                     parseTree.ParserMessages
@@ -43,73 +51,91 @@ namespace GenericSearch.Grammar
                 throw new InvalidSearchException("The search term is invalid:\r\n" + errors);
             }
 
-            LambdaExpression lambda = property as LambdaExpression;
-            var arg = lambda.Parameters[0];
-            var propertyMemberExpression = lambda.Body as MemberExpression;
+            var arg = Expression.Parameter(typeof(T), "p");
+            MemberExpression[] memberExpressions = new MemberExpression[properties.Length];
 
-            if (propertyMemberExpression == null)
+            for (int i = 0; i < properties.Length; i++)
             {
-                throw new ArgumentException(
-                    "Please provide property member expression like 'o => o.Name'",
-                    "property");
+                var propertyMemberExpression = properties[i].Body as MemberExpression;
+
+                if (propertyMemberExpression == null)
+                {
+                    throw new ArgumentException(
+                        "The " + i + "th property is invalid. Please provide property member expression like 'o => o.Name'",
+                        "properties");
+                }
+
+                string propertyString = propertyMemberExpression.ToString();
+                string name = propertyString.Substring(propertyString.IndexOf('.') + 1);
+
+                memberExpressions[i] = Expression.Property(arg, name);
             }
 
-            var searchExpression = CreateChildExpression(parseTree.Root, propertyMemberExpression);
+            var terms = new HashSet<string>();
+
+            var searchExpression = CreateChildExpression(parseTree.Root, memberExpressions, terms);
             var searchPredicate = Expression.Lambda<Func<T, bool>>(searchExpression, arg);
 
-            return query
-                .Where(searchPredicate);
+            return new SearchResult<T>(query.Where(searchPredicate), terms);
         }
 
-        private static Expression CreateChildExpression(ParseTreeNode node, MemberExpression property)
+        private static Expression CreateChildExpression(ParseTreeNode node, MemberExpression[] properties, HashSet<string> terms)
         {
             switch (node.Term.Name)
             {
                 case "OrExpression":
                     if (node.ChildNodes.Count == 1)
                     {
-                        return CreateChildExpression(node.ChildNodes[0], property);
+                        return CreateChildExpression(node.ChildNodes[0], properties, terms);
                     }
                     else
                     {
                         return Expression.OrElse(
-                            CreateChildExpression(node.ChildNodes[0], property),
-                            CreateChildExpression(node.ChildNodes[2], property));
+                            CreateChildExpression(node.ChildNodes[0], properties, terms),
+                            CreateChildExpression(node.ChildNodes[2], properties, terms));
                     }
 
                 case "AndExpression":
                     if (node.ChildNodes.Count == 1)
                     {
-                        return CreateChildExpression(node.ChildNodes[0], property);
+                        return CreateChildExpression(node.ChildNodes[0], properties, terms);
                     }
                     else
                     {
                         return Expression.AndAlso(
-                            CreateChildExpression(node.ChildNodes[0], property),
-                            CreateChildExpression(node.ChildNodes[2], property));
+                            CreateChildExpression(node.ChildNodes[0], properties, terms),
+                            CreateChildExpression(node.ChildNodes[2], properties, terms));
                     }
 
                 case "NegatedExpression":
-                    var childExpression = CreateChildExpression(node.ChildNodes[1], property);
+                    var childExpression = CreateChildExpression(node.ChildNodes[1], properties, terms);
                     return Expression.Not(childExpression);
 
                 case "ParenthesizedExpression":
                 case "PrimaryExpression":
-                    return CreateChildExpression(node.ChildNodes[0], property);
+                    return CreateChildExpression(node.ChildNodes[0], properties, terms);
 
                 case "Phrase":
                 case "Term":
-                    var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
+                    terms.Add(node.Token.Value.ToString());
 
-                    var searchExpression = Expression.GreaterThan(
-                        Expression.Call(
-                            property,
-                            typeof(string).GetMethod("IndexOf", new[] { typeof(string), typeof(StringComparison) }),
-                            Expression.Constant(node.Token.Value),
-                            Expression.Constant(StringComparison.CurrentCultureIgnoreCase)),
-                        Expression.Constant(-1));
+                    Expression searchExpression = Expression.Constant(false);
 
-                    return Expression.AndAlso(nullCheckExpression, searchExpression);
+                    foreach (var property in properties)
+                    {
+                        var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
+
+                        var containsExpression = Expression.Call(property,
+                            typeof(string).GetMethod("Contains", new[] { typeof(string) }),
+                            Expression.Constant(node.Token.Value)
+                        );
+
+                        var combinedExpression = Expression.AndAlso(nullCheckExpression, containsExpression);
+
+                        searchExpression = Expression.OrElse(searchExpression, combinedExpression);
+                    }
+
+                    return searchExpression;
 
                 default:
                     throw new InvalidOperationException("Grammar element '" + node.Term.Name + "' is not handled correctly. Please investigate.");

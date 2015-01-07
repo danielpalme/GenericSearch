@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.UI", "GenericSearch.UI\GenericSearch.UI.csproj", "{05731E06-F442-42BF-B644-98D028206F94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.Core", "GenericSearch.Core\GenericSearch.Core.csproj", "{1D2BDC73-FB11-4468-BCFC-884FAF754A01}"
@@ -14,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.Grammar", "GenericSearch.Grammar\GenericSearch.Grammar.csproj", "{5E61EE4F-9C1A-4BAE-AE12-FD5C2F6B577A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.Grammar.Test", "GenericSearch.Grammar.Test\GenericSearch.Grammar.Test.csproj", "{F117F776-6F3A-43AC-AF7F-3E828817C631}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grammar", "Grammar", "{A444A1CE-AD85-4A4F-A1D8-00400B93CF5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.Common", "GenericSearch.Common\GenericSearch.Common.csproj", "{D4ED5D8D-8ACA-4E70-AE80-68E92D973098}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,8 +47,17 @@ Global
 		{F117F776-6F3A-43AC-AF7F-3E828817C631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F117F776-6F3A-43AC-AF7F-3E828817C631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F117F776-6F3A-43AC-AF7F-3E828817C631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4ED5D8D-8ACA-4E70-AE80-68E92D973098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4ED5D8D-8ACA-4E70-AE80-68E92D973098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4ED5D8D-8ACA-4E70-AE80-68E92D973098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4ED5D8D-8ACA-4E70-AE80-68E92D973098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F117F776-6F3A-43AC-AF7F-3E828817C631} = {A444A1CE-AD85-4A4F-A1D8-00400B93CF5F}
+		{5E61EE4F-9C1A-4BAE-AE12-FD5C2F6B577A} = {A444A1CE-AD85-4A4F-A1D8-00400B93CF5F}
+		{D4ED5D8D-8ACA-4E70-AE80-68E92D973098} = {A444A1CE-AD85-4A4F-A1D8-00400B93CF5F}
 	EndGlobalSection
 EndGlobal
