@@ -15,8 +15,6 @@ namespace GenericSearch.Core
                 query = criteria.ApplyToQuery(query);
             }
 
-            var result = query.ToArray();
-
             return query;
         }
 
