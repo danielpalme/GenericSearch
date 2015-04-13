@@ -5,6 +5,15 @@ namespace GenericSearch.Core
 {
     public class EnumSearch : AbstractSearch
     {
+        public EnumSearch()
+        {
+        }
+
+        public EnumSearch(Type enumType)
+        {
+            this.EnumTypeName = enumType.AssemblyQualifiedName;
+        }
+
         public string SearchTerm { get; set; }
 
         public Type EnumType
@@ -17,16 +26,7 @@ namespace GenericSearch.Core
 
         public string EnumTypeName { get; set; }
 
-        public EnumSearch()
-        {
-        }
-
-        public EnumSearch(Type enumType)
-        {
-            this.EnumTypeName = enumType.AssemblyQualifiedName;
-        }
-
-        protected override System.Linq.Expressions.Expression BuildExpression(System.Linq.Expressions.MemberExpression property)
+        protected override System.Linq.Expressions.Expression BuildFilterExpression(Expression property)
         {
             if (this.SearchTerm == null)
             {

@@ -50,13 +50,37 @@ namespace GenericSearch.Core
 
             Expression searchExpression = null;
 
-            if (property.Type.IsGenericType && property.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (property.Type.IsNullableType())
             {
-                searchExpression = this.BuildExpression(Expression.Property(property, "Value"));
+                searchExpression = this.BuildFilterExpression(Expression.Property(property, "Value"));
+            }
+            else if (property.Type.IsCollectionType())
+            {
+                var parameter = Expression.Parameter(property.Type.GetGenericArguments().First());
+                var filterExpression = this.BuildFilterExpression(parameter);
+
+                if (filterExpression != null)
+                {
+                    var asQueryable = typeof(Queryable).GetMethods()
+                        .Where(m => m.Name == "AsQueryable")
+                        .Single(m => m.IsGenericMethod)
+                        .MakeGenericMethod(property.Type.GetGenericArguments());
+
+                    var anyMethod = typeof(Queryable).GetMethods()
+                        .Where(m => m.Name == "Any")
+                        .Single(m => m.GetParameters().Length == 2)
+                        .MakeGenericMethod(property.Type.GetGenericArguments());
+
+                    searchExpression = Expression.Call(
+                        null,
+                        anyMethod,
+                        Expression.Call(null, asQueryable, property),
+                        Expression.Lambda(this.BuildFilterExpression(parameter), parameter));
+                }
             }
             else
             {
-                searchExpression = this.BuildExpression(property);
+                searchExpression = this.BuildFilterExpression(property);
             }
 
             if (searchExpression == null)
@@ -65,12 +89,12 @@ namespace GenericSearch.Core
             }
             else
             {
-                var predicate = CreatePredicateWithNullCheck<T>(searchExpression, arg, property);
+                var predicate = this.CreatePredicateWithNullCheck<T>(searchExpression, arg, property);
                 return query.Where(predicate);
             }
         }
 
-        protected abstract Expression BuildExpression(MemberExpression property);
+        protected abstract Expression BuildFilterExpression(Expression property);
 
         private MemberExpression GetPropertyAccess(ParameterExpression arg)
         {
@@ -105,7 +129,7 @@ namespace GenericSearch.Core
                 }
             }
 
-            if (!targetProperty.Type.IsValueType || (targetProperty.Type.IsGenericType && targetProperty.Type.GetGenericTypeDefinition() == typeof(Nullable<>)))
+            if (!targetProperty.Type.IsValueType || targetProperty.Type.IsNullableType())
             {
                 var innerNullCheckExpression = Expression.NotEqual(targetProperty, Expression.Constant(null));
 

@@ -5,18 +5,18 @@ namespace GenericSearch.Data
 {
     public class Repository
     {
-        private static readonly IEnumerable<SomeClass> instances = CreateDummyData();
+        private static readonly IEnumerable<SomeClass> Instances = CreateDummyData();
 
         public IQueryable<SomeClass> GetQuery()
         {
-            var query = instances.ToArray().AsQueryable();
+            var query = Instances.ToArray().AsQueryable();
 
             return query;
         }
 
         private static IEnumerable<SomeClass> CreateDummyData()
         {
-            return new List<SomeClass>()
+            var dummyData = new List<SomeClass>()
             {
                 new SomeClass()
                 {
@@ -191,6 +191,22 @@ namespace GenericSearch.Data
                     MyEnum = Data.MyEnum.Third,
                 }
             };
+
+            for (int i = 0; i < dummyData.Count; i++)
+            {
+                if (i < dummyData.Count / 2)
+                {
+                    dummyData[i].CollectionString.Add("simple_123");
+                    dummyData[i].CollectionString.Add("simple_234");
+                }
+                else
+                {
+                    dummyData[i].CollectionString.Add("simple_456");
+                    dummyData[i].CollectionString.Add("simple_567");
+                }
+            }
+
+            return dummyData;
         }
     }
 }

@@ -27,6 +27,7 @@
                 <th><a href="@Html.GetSortingUrl(this.Model.Data, "IntegerNullable", this.Request.RawUrl)">IntegerNullable</a></th>
                 <th><a href="@Html.GetSortingUrl(this.Model.Data, "MyEnum", this.Request.RawUrl)">MyEnum</a></th>
                 <th><a href="@Html.GetSortingUrl(this.Model.Data, "Text", this.Request.RawUrl)">Text</a></th>
+                <th>CollectionString</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +40,8 @@
                         <td>@item.Integer</td>
                         <td>@item.IntegerNullable</td>
                         <td>@item.MyEnum</td>
-                        <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Last().SearchTerm)</td>
+                        <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().First().SearchTerm)</td>
+                        <td>@string.Join(", ", item.CollectionString).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(1).First().SearchTerm)</td>
                     </tr>
                 }
             }

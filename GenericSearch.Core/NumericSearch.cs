@@ -10,7 +10,7 @@ namespace GenericSearch.Core
 
         public NumericComparators Comparator { get; set; }
 
-        protected override Expression BuildExpression(MemberExpression property)
+        protected override Expression BuildFilterExpression(Expression property)
         {
             if (!this.SearchTerm.HasValue)
             {
@@ -22,7 +22,7 @@ namespace GenericSearch.Core
             return searchExpression;
         }
 
-        private Expression GetFilterExpression(MemberExpression property)
+        private Expression GetFilterExpression(Expression property)
         {
             switch (this.Comparator)
             {

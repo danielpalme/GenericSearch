@@ -1,5 +1,4 @@
-﻿
-namespace GenericSearch.Data
+﻿namespace GenericSearch.Data
 {
     public class SomeNestedClass
     {

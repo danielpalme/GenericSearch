@@ -16,7 +16,7 @@ namespace GenericSearch.Core
 
         public DateComparators Comparator { get; set; }
 
-        protected override Expression BuildExpression(MemberExpression property)
+        protected override Expression BuildFilterExpression(Expression property)
         {
             Expression searchExpression1 = null;
             Expression searchExpression2 = null;
@@ -50,7 +50,7 @@ namespace GenericSearch.Core
             }
         }
 
-        private Expression GetFilterExpression(MemberExpression property)
+        private Expression GetFilterExpression(Expression property)
         {
             switch (this.Comparator)
             {

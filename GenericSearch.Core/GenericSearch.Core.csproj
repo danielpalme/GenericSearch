@@ -50,6 +50,7 @@
     <Compile Include="EnumSearch.cs" />
     <Compile Include="NumericSearch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="SearchExtensions.cs" />
     <Compile Include="TextSearch.cs" />
   </ItemGroup>

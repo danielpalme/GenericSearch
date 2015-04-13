@@ -9,7 +9,7 @@ namespace GenericSearch.Core
 
         public TextComparators Comparator { get; set; }
 
-        protected override Expression BuildExpression(MemberExpression property)
+        protected override Expression BuildFilterExpression(Expression property)
         {
             if (this.SearchTerm == null)
             {

@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace GenericSearch.Data
 {
     public class SomeClass
     {
+        public SomeClass()
+        {
+            this.CollectionString = new Collection<string>();
+        }
+
         public DateTime Date { get; set; }
 
         public DateTime? DateNullable { get; set; }
@@ -19,5 +25,7 @@ namespace GenericSearch.Data
         public string Text { get; set; }
 
         public SomeNestedClass Nested { get; set; }
+
+        public Collection<string> CollectionString { get; set; }
     }
 }

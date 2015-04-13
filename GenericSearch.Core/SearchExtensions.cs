@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,7 +23,8 @@ namespace GenericSearch.Core
         {
             var properties = type.GetProperties()
                 .Where(p => p.CanRead && p.CanWrite)
-                .OrderBy(p => p.Name);
+                .OrderBy(p => p.PropertyType.IsCollectionType())
+                .ThenBy(p => p.Name);
 
             var searchCriterias = properties
                 .Select(p => CreateSearchCriteria(type, p.PropertyType, p.Name))
@@ -50,6 +52,11 @@ namespace GenericSearch.Core
         private static AbstractSearch CreateSearchCriteria(Type targetType, Type propertyType, string property)
         {
             AbstractSearch result = null;
+
+            if (propertyType.IsCollectionType())
+            {
+                propertyType = propertyType.GetGenericArguments().First();
+            }
 
             if (propertyType.Equals(typeof(string)))
             {
