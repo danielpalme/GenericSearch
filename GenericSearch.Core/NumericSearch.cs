@@ -4,6 +4,24 @@ using System.Linq.Expressions;
 
 namespace GenericSearch.Core
 {
+    public enum NumericComparators
+    {
+        [Display(Name = "<")]
+        Less,
+
+        [Display(Name = "<=")]
+        LessOrEqual,
+
+        [Display(Name = "==")]
+        Equal,
+
+        [Display(Name = ">=")]
+        GreaterOrEqual,
+
+        [Display(Name = ">")]
+        Greater
+    }
+
     public class NumericSearch : AbstractSearch
     {
         public int? SearchTerm { get; set; }
@@ -40,23 +58,5 @@ namespace GenericSearch.Core
                     throw new InvalidOperationException("Comparator not supported.");
             }
         }
-    }
-
-    public enum NumericComparators
-    {
-        [Display(Name = "<")]
-        Less,
-
-        [Display(Name = "<=")]
-        LessOrEqual,
-
-        [Display(Name = "==")]
-        Equal,
-
-        [Display(Name = ">=")]
-        GreaterOrEqual,
-
-        [Display(Name = ">")]
-        Greater
     }
 }

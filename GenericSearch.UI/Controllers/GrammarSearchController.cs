@@ -32,7 +32,7 @@ namespace GenericSearch.UI.Controllers
                 model.Terms = Enumerable.Empty<string>();
             }
 
-            return View(model);
+            return this.View(model);
         }
 
         private SearchResult<SomeClass> FilterUsingGrammar(GrammarSearchViewModel model)

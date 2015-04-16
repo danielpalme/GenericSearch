@@ -3,6 +3,8 @@ packages/Irony*
 packages/Microsoft*
 packages/Modernizr*
 packages/Newtonsoft*
+packages/OpenCover*
+packages/ReportGenerator*
 packages/Respond*
 packages/WebGrease*
 packages/bootstrap*
@@ -12,3 +14,5 @@ packages/jQuery*
 *.Cache
 obj
 bin
+TestResults
+target

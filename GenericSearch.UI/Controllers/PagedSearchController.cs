@@ -21,12 +21,12 @@ namespace GenericSearch.UI.Controllers
             if (searchCriteria == null)
             {
                 searchCriteria = typeof(GenericSearch.Data.SomeClass)
-                    .GetDefaultSearchCriterias();
+                    .GetDefaultSearchCriteria();
             }
 
             var data = this.repository
                 .GetQuery()
-                .ApplySearchCriterias(searchCriteria)
+                .ApplySearchCriteria(searchCriteria)
                 .GetPagedResult(paging);
 
             var model = new PagedSearchViewModel()
@@ -35,7 +35,7 @@ namespace GenericSearch.UI.Controllers
                 SearchCriteria = searchCriteria
             };
 
-            return View(model);
+            return this.View(model);
         }
     }
 }

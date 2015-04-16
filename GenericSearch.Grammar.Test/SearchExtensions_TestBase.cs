@@ -49,7 +49,6 @@ namespace GenericSearch.Grammar.Test
                 sampleInput,
                 "Test",
                 new Expression<Func<Document, string>>[] { d => d.Title });
-
         }
 
         [TestMethod]
@@ -60,7 +59,6 @@ namespace GenericSearch.Grammar.Test
                 sampleInput,
                 "Test",
                 new Expression<Func<Document, string>>[] { });
-
         }
 
         [TestMethod]
@@ -95,7 +93,6 @@ namespace GenericSearch.Grammar.Test
                 sampleInput,
                 "(Test and Test",
                 new Expression<Func<Document, string>>[] { d => d.Title });
-
         }
 
         [TestMethod]

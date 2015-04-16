@@ -19,10 +19,9 @@ namespace GenericSearch.Grammar.AntlrGrammar
             return this.stringBuilder.ToString();
         }
 
-
         public override string VisitOrExpression(SearchGrammarParser.OrExpressionContext context)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "OrExpression");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "OrExpression");
             this.currentDepth += 2;
 
             var result = base.VisitOrExpression(context);
@@ -34,7 +33,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitAndExpression(SearchGrammarParser.AndExpressionContext context)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "AndExpression");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "AndExpression");
             this.currentDepth += 2;
 
             var result = base.VisitAndExpression(context);
@@ -46,7 +45,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitPrimaryExpression(SearchGrammarParser.PrimaryExpressionContext context)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "PrimaryExpression");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "PrimaryExpression");
             this.currentDepth += 2;
 
             var result = base.VisitPrimaryExpression(context);
@@ -58,7 +57,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitParenthesizedExpression(SearchGrammarParser.ParenthesizedExpressionContext context)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "ParenthesizedExpression");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "ParenthesizedExpression");
             this.currentDepth += 2;
 
             var result = base.VisitParenthesizedExpression(context);
@@ -70,13 +69,13 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitTerminal(ITerminalNode node)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "Terminal: '" + node.GetText() + "'");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "Terminal: '" + node.GetText() + "'");
             return null;
         }
 
         public override string VisitPhraseExpression(SearchGrammarParser.PhraseExpressionContext context)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "PhraseExpression");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "PhraseExpression");
             this.currentDepth += 2;
 
             var result = base.VisitPhraseExpression(context);
@@ -88,8 +87,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitNegatedExpression(SearchGrammarParser.NegatedExpressionContext context)
         {
-
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "NegatedExpression" + "'");
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "NegatedExpression" + "'");
             this.currentDepth += 2;
 
             var result = base.VisitNegatedExpression(context);
@@ -101,7 +99,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override string VisitErrorNode(IErrorNode node)
         {
-            this.stringBuilder.AppendLine(new String(' ', currentDepth) + "Error: '" + node.GetText());
+            this.stringBuilder.AppendLine(new string(' ', this.currentDepth) + "Error: '" + node.GetText());
             return null;
         }
     }

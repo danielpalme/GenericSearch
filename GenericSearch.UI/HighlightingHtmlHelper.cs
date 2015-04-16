@@ -34,7 +34,6 @@ namespace GenericSearch.UI
 
             foreach (var keyword in keywords.Where(k => !string.IsNullOrEmpty(k)).OrderByDescending(k => k.Length))
             {
-
                 int currentIndex = 0;
 
                 while (currentIndex != -1 && currentIndex < term.Length)

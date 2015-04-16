@@ -26,16 +26,6 @@ namespace GenericSearch.Common
 
         public IEnumerable<string> Terms { get; private set; }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            return this.query.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return this.query.GetEnumerator();
-        }
-
         public Type ElementType
         {
             get { return this.query.ElementType; }
@@ -49,6 +39,16 @@ namespace GenericSearch.Common
         public IQueryProvider Provider
         {
             get { return this.query.Provider; }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return this.query.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.query.GetEnumerator();
         }
     }
 }

@@ -26,11 +26,11 @@ namespace GenericSearch.UI.Controllers
             {
                 Data = data,
                 SearchCriteria = typeof(GenericSearch.Data.SomeClass)
-                    .GetDefaultSearchCriterias()
-                    .AddCustomSearchCriteria<GenericSearch.Data.SomeClass>(s => s.Nested.TextNested)
+                    .GetDefaultSearchCriteria()
+                    .AddCustomSearchCriterion<GenericSearch.Data.SomeClass>(s => s.Nested.TextNested)
             };
 
-            return View(model);
+            return this.View(model);
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace GenericSearch.UI.Controllers
         {
             var data = this.repository
                 .GetQuery()
-                .ApplySearchCriterias(searchCriteria)
+                .ApplySearchCriteria(searchCriteria)
                 .ToArray();
 
             var model = new SearchViewModel()
@@ -47,7 +47,7 @@ namespace GenericSearch.UI.Controllers
                 SearchCriteria = searchCriteria
             };
 
-            return View(model);
+            return this.View(model);
         }
     }
 }

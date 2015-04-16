@@ -4,6 +4,27 @@ using System.Linq.Expressions;
 
 namespace GenericSearch.Core
 {
+    public enum DateComparators
+    {
+        [Display(Name = "<")]
+        Less,
+
+        [Display(Name = "<=")]
+        LessOrEqual,
+
+        [Display(Name = "==")]
+        Equal,
+
+        [Display(Name = ">=")]
+        GreaterOrEqual,
+
+        [Display(Name = ">")]
+        Greater,
+
+        [Display(Name = "Range")]
+        InRange
+    }
+
     public class DateSearch : AbstractSearch
     {
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
@@ -69,26 +90,5 @@ namespace GenericSearch.Core
                     throw new InvalidOperationException("Comparator not supported.");
             }
         }
-    }
-
-    public enum DateComparators
-    {
-        [Display(Name = "<")]
-        Less,
-
-        [Display(Name = "<=")]
-        LessOrEqual,
-
-        [Display(Name = "==")]
-        Equal,
-
-        [Display(Name = ">=")]
-        GreaterOrEqual,
-
-        [Display(Name = ">")]
-        Greater,
-
-        [Display(Name = "Range")]
-        InRange
     }
 }

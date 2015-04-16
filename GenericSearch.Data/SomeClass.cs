@@ -9,6 +9,7 @@ namespace GenericSearch.Data
         public SomeClass()
         {
             this.CollectionString = new Collection<string>();
+            this.CollectionComplex = new Collection<SomeNestedClass>();
         }
 
         public DateTime Date { get; set; }
@@ -27,5 +28,7 @@ namespace GenericSearch.Data
         public SomeNestedClass Nested { get; set; }
 
         public Collection<string> CollectionString { get; set; }
+
+        public Collection<SomeNestedClass> CollectionComplex { get; set; }
     }
 }

@@ -34,8 +34,8 @@ namespace GenericSearch.Grammar.AntlrGrammar
             else
             {
                 var expression = Expression.OrElse(
-                    base.Visit(context.children[0]).Expression,
-                    base.Visit(context.children[context.ChildCount - 1]).Expression);
+                    this.Visit(context.children[0]).Expression,
+                    this.Visit(context.children[context.ChildCount - 1]).Expression);
 
                 return new GrammarResult(expression, this.terms);
             }
@@ -50,8 +50,8 @@ namespace GenericSearch.Grammar.AntlrGrammar
             else
             {
                 var expression = Expression.AndAlso(
-                    base.Visit(context.children[0]).Expression,
-                    base.Visit(context.children[context.ChildCount - 1]).Expression);
+                    this.Visit(context.children[0]).Expression,
+                    this.Visit(context.children[context.ChildCount - 1]).Expression);
 
                 return new GrammarResult(expression, this.terms);
             }
@@ -70,11 +70,11 @@ namespace GenericSearch.Grammar.AntlrGrammar
         public override GrammarResult VisitParenthesizedExpression(SearchGrammarParser.ParenthesizedExpressionContext context)
         {
             this.trackTerms = false;
-            base.Visit(context.children[0]);
-            base.Visit(context.children[2]);
+            this.Visit(context.children[0]);
+            this.Visit(context.children[2]);
             this.trackTerms = true;
 
-            return base.Visit(context.children[1]);
+            return this.Visit(context.children[1]);
         }
 
         public override GrammarResult VisitTerminal(ITerminalNode node)
@@ -104,7 +104,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override GrammarResult VisitNegatedExpression(SearchGrammarParser.NegatedExpressionContext context)
         {
-            var childExpression = base.Visit(context.children[context.ChildCount - 1]).Expression;
+            var childExpression = this.Visit(context.children[context.ChildCount - 1]).Expression;
             var expression = Expression.Not(childExpression);
 
             return new GrammarResult(expression, this.terms);
@@ -128,10 +128,10 @@ namespace GenericSearch.Grammar.AntlrGrammar
             {
                 var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
 
-                var containsExpression = Expression.Call(property,
+                var containsExpression = Expression.Call(
+                    property,
                     typeof(string).GetMethod("Contains", new[] { typeof(string) }),
-                    Expression.Constant(searchTerm)
-                );
+                    Expression.Constant(searchTerm));
 
                 var combinedExpression = Expression.AndAlso(nullCheckExpression, containsExpression);
 

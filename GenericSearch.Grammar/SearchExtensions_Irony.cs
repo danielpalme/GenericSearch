@@ -125,10 +125,10 @@ namespace GenericSearch.Grammar
                     {
                         var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
 
-                        var containsExpression = Expression.Call(property,
+                        var containsExpression = Expression.Call(
+                            property,
                             typeof(string).GetMethod("Contains", new[] { typeof(string) }),
-                            Expression.Constant(node.Token.Value)
-                        );
+                            Expression.Constant(node.Token.Value));
 
                         var combinedExpression = Expression.AndAlso(nullCheckExpression, containsExpression);
 

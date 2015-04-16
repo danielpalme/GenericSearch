@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GenericSearch.Core")]
+[assembly: AssemblyTitle("GenericSearch.Core.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Palmmedia")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f58835c1-494c-42fc-b247-94e5bac22910")]
+[assembly: Guid("803c59d4-84e2-4b20-8fc5-76f1f822f33d")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,5 +33,3 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("GenericSearch.Core.Test")]

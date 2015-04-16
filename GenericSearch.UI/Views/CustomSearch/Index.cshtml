@@ -29,6 +29,7 @@
                 <th>Text</th>
                 <th>Nested.TextNested</th>
                 <th>CollectionString</th>
+                <th>CollectionComplex</th>
             </tr>
         </thead>
         <tbody>
@@ -44,7 +45,8 @@
                         <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().First().SearchTerm)</td>
                         <td>@{if (item.Nested != null)
                               {<text>@item.Nested.TextNested.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(1).First().SearchTerm)</text>}}</td>
-                        <td>@string.Join(", ", item.CollectionString)</td>
+                        <td>@string.Join(", ", item.CollectionString).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(2).First().SearchTerm)</td>
+                        <td>@string.Join(", ", item.CollectionComplex.Select(i => i.TextNested)).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(3).First().SearchTerm)</td>
                     </tr>
                 }
             }

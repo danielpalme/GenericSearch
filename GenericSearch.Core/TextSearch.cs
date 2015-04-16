@@ -3,6 +3,15 @@ using System.Linq.Expressions;
 
 namespace GenericSearch.Core
 {
+    public enum TextComparators
+    {
+        [Display(Name = "Contains")]
+        Contains,
+
+        [Display(Name = "==")]
+        Equals
+    }
+
     public class TextSearch : AbstractSearch
     {
         public string SearchTerm { get; set; }
@@ -23,14 +32,5 @@ namespace GenericSearch.Core
 
             return searchExpression;
         }
-    }
-
-    public enum TextComparators
-    {
-        [Display(Name = "Contains")]
-        Contains,
-
-        [Display(Name = "==")]
-        Equals
     }
 }

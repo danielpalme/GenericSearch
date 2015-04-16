@@ -104,7 +104,16 @@ namespace GenericSearch.Core
 
             for (int i = 1; i < parts.Length; i++)
             {
-                property = Expression.Property(property, parts[i]);
+                if (property.Type.IsCollectionType())
+                {
+                    property = Expression.Property(
+                        Expression.Parameter(property.Type.GetGenericArguments().First()),
+                        parts[i]);
+                }
+                else
+                {
+                    property = Expression.Property(property, parts[i]);
+                }
             }
 
             return property;

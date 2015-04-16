@@ -3,6 +3,13 @@ using GenericSearch.Data;
 
 namespace GenericSearch.UI.Models
 {
+    public enum Grammar
+    {
+        Antlr,
+
+        Irony
+    }
+
     public class GrammarSearchViewModel
     {
         public IEnumerable<SomeClass> Data { get; set; }
@@ -12,12 +19,5 @@ namespace GenericSearch.UI.Models
         public Grammar Grammar { get; set; }
 
         public IEnumerable<string> Terms { get; set; }
-    }
-
-    public enum Grammar
-    {
-        Antlr,
-
-        Irony
     }
 }

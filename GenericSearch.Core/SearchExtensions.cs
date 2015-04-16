@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace GenericSearch.Core
 {
     public static class SearchExtensions
     {
-        public static IQueryable<T> ApplySearchCriterias<T>(this IQueryable<T> query, IEnumerable<AbstractSearch> searchCriterias)
+        public static IQueryable<T> ApplySearchCriteria<T>(this IQueryable<T> query, IEnumerable<AbstractSearch> searchCriterias)
         {
             foreach (var criteria in searchCriterias)
             {
@@ -19,7 +17,7 @@ namespace GenericSearch.Core
             return query;
         }
 
-        public static ICollection<AbstractSearch> GetDefaultSearchCriterias(this Type type)
+        public static ICollection<AbstractSearch> GetDefaultSearchCriteria(this Type type)
         {
             var properties = type.GetProperties()
                 .Where(p => p.CanRead && p.CanWrite)
@@ -27,19 +25,19 @@ namespace GenericSearch.Core
                 .ThenBy(p => p.Name);
 
             var searchCriterias = properties
-                .Select(p => CreateSearchCriteria(type, p.PropertyType, p.Name))
+                .Select(p => CreateSearchCriterion(type, p.PropertyType, p.Name))
                 .Where(s => s != null)
                 .ToList();
 
             return searchCriterias;
         }
 
-        public static ICollection<AbstractSearch> AddCustomSearchCriteria<T>(this ICollection<AbstractSearch> searchCriterias, Expression<Func<T, object>> property)
+        public static ICollection<AbstractSearch> AddCustomSearchCriterion<T>(this ICollection<AbstractSearch> searchCriterias, Expression<Func<T, object>> property)
         {
             Type propertyType = null;
             string fullPropertyPath = GetPropertyPath(property, out propertyType);
 
-            AbstractSearch searchCriteria = CreateSearchCriteria(typeof(T), propertyType, fullPropertyPath);
+            AbstractSearch searchCriteria = CreateSearchCriterion(typeof(T), propertyType, fullPropertyPath);
 
             if (searchCriteria != null)
             {
@@ -49,7 +47,7 @@ namespace GenericSearch.Core
             return searchCriterias;
         }
 
-        private static AbstractSearch CreateSearchCriteria(Type targetType, Type propertyType, string property)
+        private static AbstractSearch CreateSearchCriterion(Type targetType, Type propertyType, string property)
         {
             AbstractSearch result = null;
 
@@ -86,28 +84,60 @@ namespace GenericSearch.Core
 
         private static string GetPropertyPath<T>(Expression<Func<T, object>> expression, out Type targetType)
         {
-            var lambda = expression as LambdaExpression;
-            MemberExpression memberExpression;
-            if (lambda.Body is UnaryExpression)
+            MethodCallExpression methodCallExpression = expression.Body as MethodCallExpression;
+
+            if (methodCallExpression != null)
             {
-                var unaryExpression = lambda.Body as UnaryExpression;
-                memberExpression = unaryExpression.Operand as MemberExpression;
+                if (methodCallExpression.Arguments.Count == 2)
+                {
+                    MemberExpression memberExpression1 = methodCallExpression.Arguments[0] as MemberExpression;
+                    LambdaExpression lambdaExpression = methodCallExpression.Arguments[1] as LambdaExpression;
+
+                    if (memberExpression1 != null && lambdaExpression != null)
+                    {
+                        MemberExpression memberExpression2 = lambdaExpression.Body as MemberExpression;
+
+                        if (memberExpression2 != null)
+                        {
+                            targetType = memberExpression2.Type;
+
+                            return string.Format("{0}.{1}",
+                                GetPropertyPath(memberExpression1),
+                                GetPropertyPath(memberExpression2));
+                        }
+                    }
+                }
+
+                throw new ArgumentException("Please provide a lambda expression like 'n => n.Collection.Select(c => c.PropertyName)'", "expression");
             }
             else
             {
-                memberExpression = lambda.Body as MemberExpression;
-            }
+                UnaryExpression unaryExpression = expression.Body as UnaryExpression;
+                MemberExpression memberExpression = null;
 
-            if (memberExpression == null)
-            {
+                if (unaryExpression != null)
+                {
+                    memberExpression = unaryExpression.Operand as MemberExpression;
+                }
+                else
+                {
+                    memberExpression = expression.Body as MemberExpression;
+                }
+
+                if (memberExpression != null)
+                {
+                    targetType = memberExpression.Type;
+
+                    return GetPropertyPath(memberExpression);
+                }
+
                 throw new ArgumentException("Please provide a lambda expression like 'n => n.PropertyName'", "expression");
             }
+        }
 
-            var propertyInfo = memberExpression.Member as PropertyInfo;
-            targetType = propertyInfo.PropertyType;
-
+        private static string GetPropertyPath(MemberExpression memberExpression)
+        {
             string property = memberExpression.ToString();
-
             return property.Substring(property.IndexOf('.') + 1);
         }
     }

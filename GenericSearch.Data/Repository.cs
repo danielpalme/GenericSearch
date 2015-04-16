@@ -198,11 +198,29 @@ namespace GenericSearch.Data
                 {
                     dummyData[i].CollectionString.Add("simple_123");
                     dummyData[i].CollectionString.Add("simple_234");
+
+                    dummyData[i].CollectionComplex.Add(new SomeNestedClass()
+                        {
+                            TextNested = "complex_678"
+                        });
+                    dummyData[i].CollectionComplex.Add(new SomeNestedClass()
+                        {
+                            TextNested = "complex_789"
+                        });
                 }
                 else
                 {
                     dummyData[i].CollectionString.Add("simple_456");
                     dummyData[i].CollectionString.Add("simple_567");
+
+                    dummyData[i].CollectionComplex.Add(new SomeNestedClass()
+                    {
+                        TextNested = "complex_876"
+                    });
+                    dummyData[i].CollectionComplex.Add(new SomeNestedClass()
+                    {
+                        TextNested = "complex_987"
+                    });
                 }
             }
 

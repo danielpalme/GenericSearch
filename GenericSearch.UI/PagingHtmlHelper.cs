@@ -28,8 +28,8 @@ namespace GenericSearch.UI
                 return MvcHtmlString.Create(string.Empty);
             }
 
-            var ulBuilder = new TagBuilder("ul");
-            ulBuilder.AddCssClass("pagination");
+            var listBuilder = new TagBuilder("ul");
+            listBuilder.AddCssClass("pagination");
 
             var pagingIndexes = GetPagingIndexes(
                 pagedResult.Paging.PageIndex,
@@ -42,14 +42,14 @@ namespace GenericSearch.UI
                     var extraLiBuilder = new TagBuilder("li");
                     extraLiBuilder.InnerHtml = "<span>&hellip;</span>";
                     extraLiBuilder.AddCssClass("disabled");
-                    ulBuilder.InnerHtml += extraLiBuilder.ToString();
+                    listBuilder.InnerHtml += extraLiBuilder.ToString();
                 }
 
-                var liBuilder = new TagBuilder("li");
+                var itemBuilder = new TagBuilder("li");
                 if (pagedResult.Paging.PageIndex == pagingIndexes[i])
                 {
-                    liBuilder.InnerHtml = "<span>" + (pagingIndexes[i] + 1).ToString() + "</span>";
-                    liBuilder.AddCssClass("active");
+                    itemBuilder.InnerHtml = "<span>" + (pagingIndexes[i] + 1).ToString() + "</span>";
+                    itemBuilder.AddCssClass("active");
                 }
                 else
                 {
@@ -64,13 +64,13 @@ namespace GenericSearch.UI
                     pagingLinkBuilder.AddCssClass("paging");
                     pagingLinkBuilder.SetInnerText((pagingIndexes[i] + 1).ToString());
 
-                    liBuilder.InnerHtml = pagingLinkBuilder.ToString();
+                    itemBuilder.InnerHtml = pagingLinkBuilder.ToString();
                 }
 
-                ulBuilder.InnerHtml += liBuilder.ToString();
+                listBuilder.InnerHtml += itemBuilder.ToString();
             }
 
-            return MvcHtmlString.Create(ulBuilder.ToString());
+            return MvcHtmlString.Create(listBuilder.ToString());
         }
 
         /// <summary>
