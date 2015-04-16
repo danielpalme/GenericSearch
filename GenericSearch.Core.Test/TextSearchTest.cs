@@ -47,6 +47,19 @@ namespace GenericSearch.Core
         }
 
         [TestMethod]
+        public void ApplyToQuery_EqualsNestedNestedText_CorrectResultReturned()
+        {
+            var criteria = new TextSearch();
+            criteria.Property = "Nested.Nested.TextNested";
+            criteria.TargetTypeName = typeof(SomeClass).AssemblyQualifiedName;
+
+            criteria.SearchTerm = "qwerty";
+            criteria.Comparator = TextComparators.Equals;
+
+            Assert.AreEqual(0, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+        }
+
+        [TestMethod]
         public void ApplyToQuery_EqualsTextInCollectionSimple_CorrectResultReturned()
         {
             var criteria = new TextSearch();
