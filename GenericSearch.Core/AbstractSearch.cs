@@ -37,64 +37,145 @@ namespace GenericSearch.Core
                     }
                 }
 
-                string[] parts = this.Property.Split('.');
-
-                return parts[parts.Length - 1];
+                return this.Property.Split('.').Last();
             }
         }
 
         internal IQueryable<T> ApplyToQuery<T>(IQueryable<T> query)
         {
-            var arg = Expression.Parameter(typeof(T), "p");
-            var property = this.GetPropertyAccess(arg);
+            string[] parts = this.Property.Split('.');
 
-            Expression searchExpression = null;
+            var parameter = Expression.Parameter(typeof(T), "p");
 
-            if (property.Type.IsNullableType())
-            {
-                searchExpression = this.BuildFilterExpression(Expression.Property(property, "Value"));
-            }
-            else if (property.Type.IsCollectionType())
-            {
-                var parameter = Expression.Parameter(property.Type.GetGenericArguments().First());
-                var filterExpression = this.BuildFilterExpression(parameter);
+            Expression filterExpression = this.BuildFilterExpressionWithNullChecks(null, parameter, null, parts);
 
-                if (filterExpression != null)
-                {
-                    var asQueryable = typeof(Queryable).GetMethods()
-                        .Where(m => m.Name == "AsQueryable")
-                        .Single(m => m.IsGenericMethod)
-                        .MakeGenericMethod(property.Type.GetGenericArguments());
-
-                    var anyMethod = typeof(Queryable).GetMethods()
-                        .Where(m => m.Name == "Any")
-                        .Single(m => m.GetParameters().Length == 2)
-                        .MakeGenericMethod(property.Type.GetGenericArguments());
-
-                    searchExpression = Expression.Call(
-                        null,
-                        anyMethod,
-                        Expression.Call(null, asQueryable, property),
-                        Expression.Lambda(this.BuildFilterExpression(parameter), parameter));
-                }
-            }
-            else
-            {
-                searchExpression = this.BuildFilterExpression(property);
-            }
-
-            if (searchExpression == null)
+            if (filterExpression == null)
             {
                 return query;
             }
             else
             {
-                var predicate = this.CreatePredicateWithNullCheck<T>(searchExpression, arg, property);
+                var predicate = Expression.Lambda<Func<T, bool>>(filterExpression, parameter);
                 return query.Where(predicate);
             }
         }
 
         protected abstract Expression BuildFilterExpression(Expression property);
+
+        private static Expression Combine(Expression first, Expression second)
+        {
+            if (first == null)
+            {
+                return second;
+            }
+            else
+            {
+                return Expression.AndAlso(first, second);
+            }
+        }
+
+        private Expression BuildFilterExpressionWithNullChecks(
+            Expression filterExpression,
+            ParameterExpression parameter,
+            Expression property,
+            string[] remainingPropertyParts)
+        {
+            property = Expression.Property(property == null ? parameter : property, remainingPropertyParts[0]);
+
+            if (remainingPropertyParts.Length == 1)
+            {
+                if (!property.Type.IsValueType || property.Type.IsNullableType())
+                {
+                    var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
+                    filterExpression = Combine(filterExpression, nullCheckExpression);
+                }
+
+                if (property.Type.IsNullableType())
+                {
+                    property = Expression.Property(property, "Value");
+                }
+
+                Expression searchExpression = null;
+                if (property.Type.IsCollectionType())
+                {
+                    parameter = Expression.Parameter(property.Type.GetGenericArguments().First());
+
+                    searchExpression = ApplySearchExpressionToCollection(
+                        parameter,
+                        property,
+                        this.BuildFilterExpression(parameter));
+                }
+                else
+                {
+                    searchExpression = this.BuildFilterExpression(property);
+                }
+
+                if (searchExpression == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return Combine(filterExpression, searchExpression);
+                }
+            }
+            else
+            {
+                var nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
+                filterExpression = Combine(filterExpression, nullCheckExpression);
+
+                if (property.Type.IsCollectionType())
+                {
+                    parameter = Expression.Parameter(property.Type.GetGenericArguments().First());
+                    Expression searchExpression = this.BuildFilterExpressionWithNullChecks(
+                        null,
+                        parameter,
+                        null,
+                        remainingPropertyParts.Skip(1).ToArray());
+
+                    if (searchExpression == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        searchExpression = ApplySearchExpressionToCollection(
+                            parameter,
+                            property,
+                            searchExpression);
+
+                        return Combine(filterExpression, searchExpression);
+                    }
+                }
+                else
+                {
+                    return this.BuildFilterExpressionWithNullChecks(filterExpression, parameter, property, remainingPropertyParts.Skip(1).ToArray());
+                }
+            }
+        }
+
+        private static Expression ApplySearchExpressionToCollection(ParameterExpression parameter, Expression property, Expression searchExpression)
+        {
+            if (searchExpression != null)
+            {
+                var asQueryable = typeof(Queryable).GetMethods()
+                    .Where(m => m.Name == "AsQueryable")
+                    .Single(m => m.IsGenericMethod)
+                    .MakeGenericMethod(property.Type.GetGenericArguments());
+
+                var anyMethod = typeof(Queryable).GetMethods()
+                    .Where(m => m.Name == "Any")
+                    .Single(m => m.GetParameters().Length == 2)
+                    .MakeGenericMethod(property.Type.GetGenericArguments());
+
+                searchExpression = Expression.Call(
+                    null,
+                    anyMethod,
+                    Expression.Call(null, asQueryable, property),
+                    Expression.Lambda(searchExpression, parameter));
+            }
+            return searchExpression;
+        }
 
         private MemberExpression GetPropertyAccess(ParameterExpression arg)
         {
@@ -117,53 +198,6 @@ namespace GenericSearch.Core
             }
 
             return property;
-        }
-
-        private Expression<Func<T, bool>> CreatePredicateWithNullCheck<T>(Expression searchExpression, ParameterExpression arg, MemberExpression targetProperty)
-        {
-            string[] parts = this.Property.Split('.');
-
-            Expression nullCheckExpression = null;
-            if (parts.Length > 1)
-            {
-                MemberExpression property = Expression.Property(arg, parts[0]);
-                nullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
-
-                for (int i = 1; i < parts.Length - 1; i++)
-                {
-                    property = Expression.Property(property, parts[i]);
-                    Expression innerNullCheckExpression = Expression.NotEqual(property, Expression.Constant(null));
-
-                    nullCheckExpression = Expression.AndAlso(nullCheckExpression, innerNullCheckExpression);
-                }
-            }
-
-            if (!targetProperty.Type.IsValueType || targetProperty.Type.IsNullableType())
-            {
-                var innerNullCheckExpression = Expression.NotEqual(targetProperty, Expression.Constant(null));
-
-                if (nullCheckExpression == null)
-                {
-                    nullCheckExpression = innerNullCheckExpression;
-                }
-                else
-                {
-                    nullCheckExpression = Expression.AndAlso(nullCheckExpression, innerNullCheckExpression);
-                }
-            }
-
-            if (nullCheckExpression == null)
-            {
-                return Expression.Lambda<Func<T, bool>>(searchExpression, arg);
-            }
-            else
-            {
-                var combinedExpression = Expression.AndAlso(nullCheckExpression, searchExpression);
-
-                var predicate = Expression.Lambda<Func<T, bool>>(combinedExpression, arg);
-
-                return predicate;
-            }
         }
     }
 }

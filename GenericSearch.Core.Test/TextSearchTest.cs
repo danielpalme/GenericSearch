@@ -71,5 +71,18 @@ namespace GenericSearch.Core
 
             Assert.AreEqual(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
+
+        [TestMethod]
+        public void ApplyToQuery_EqualsTextInCollectionComplex_CorrectResultReturned()
+        {
+            var criteria = new TextSearch();
+            criteria.Property = "CollectionComplex.TextNested";
+            criteria.TargetTypeName = typeof(SomeClass).AssemblyQualifiedName;
+
+            criteria.SearchTerm = "complex_678";
+            criteria.Comparator = TextComparators.Equals;
+
+            Assert.AreEqual(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+        }
     }
 }

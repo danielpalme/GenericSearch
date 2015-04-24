@@ -101,7 +101,8 @@ namespace GenericSearch.Core
                         {
                             targetType = memberExpression2.Type;
 
-                            return string.Format("{0}.{1}",
+                            return string.Format(
+                                "{0}.{1}",
                                 GetPropertyPath(memberExpression1),
                                 GetPropertyPath(memberExpression2));
                         }

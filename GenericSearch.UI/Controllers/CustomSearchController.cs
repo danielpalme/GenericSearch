@@ -28,6 +28,7 @@ namespace GenericSearch.UI.Controllers
                 SearchCriteria = typeof(GenericSearch.Data.SomeClass)
                     .GetDefaultSearchCriteria()
                     .AddCustomSearchCriterion<GenericSearch.Data.SomeClass>(s => s.Nested.TextNested)
+                    .AddCustomSearchCriterion<GenericSearch.Data.SomeClass>(s => s.CollectionComplex.Select(c => c.TextNested))
             };
 
             return this.View(model);

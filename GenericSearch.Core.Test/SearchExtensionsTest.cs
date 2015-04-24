@@ -103,6 +103,7 @@ namespace GenericSearch.Core.Test
 
             Assert.AreEqual(1, criteria.Count);
             Assert.AreEqual("Nested.TextNested", criteria.ElementAt(0).Property);
+            Assert.AreEqual("TextNested with label", criteria.ElementAt(0).LabelText);
         }
 
         [TestMethod]
