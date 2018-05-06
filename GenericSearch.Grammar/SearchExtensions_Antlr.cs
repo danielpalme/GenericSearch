@@ -17,17 +17,17 @@ namespace GenericSearch.Grammar
         {
             if (query == null)
             {
-                throw new ArgumentNullException("query");
+                throw new ArgumentNullException(nameof(query));
             }
 
             if (properties == null)
             {
-                throw new ArgumentNullException("properties");
+                throw new ArgumentNullException(nameof(properties));
             }
 
             if (properties.Length == 0)
             {
-                throw new ArgumentException("At least one property is expected", "properties");
+                throw new ArgumentException("At least one property is expected", nameof(properties));
             }
 
             if (string.IsNullOrWhiteSpace(queryString))
@@ -52,7 +52,7 @@ namespace GenericSearch.Grammar
                 {
                     throw new ArgumentException(
                         "The " + i + "th property is invalid. Please provide property member expression like 'o => o.Name'",
-                        "properties");
+                        nameof(properties));
                 }
 
                 string propertyString = propertyMemberExpression.ToString();

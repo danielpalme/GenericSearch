@@ -2,16 +2,15 @@
 using System.Linq;
 using System.Linq.Expressions;
 using GenericSearch.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GenericSearch.Grammar.Test
 {
-    [TestClass]
     public abstract class SearchExtensions_TestBase
     {
         private readonly Func<IQueryable<Document>, string, Expression<Func<Document, string>>[], SearchResult<Document>> filter;
 
-        private readonly IQueryable<Document> sampleInput = new[]
+        private readonly IQueryable<Document> sampeInput = new[]
             {
                 new Document() { Title = "one", Name = "abc" },
                 new Document() { Title = "one two", Name = "bcd" },
@@ -26,7 +25,7 @@ namespace GenericSearch.Grammar.Test
             }
             .AsQueryable();
 
-        private readonly IQueryable<Document> sampleInputSpecialCharacters = new[]
+        private readonly IQueryable<Document> sampeInputSpecialCharacters = new[]
             {
                 new Document() { Title = "oneü", Name = "abc" },
                 new Document() { Title = "one twoü", Name = "bcd" },
@@ -40,320 +39,315 @@ namespace GenericSearch.Grammar.Test
             this.filter = filter;
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GetMatches_NullAsInput_ThrowsArgumentNullException()
         {
-            IQueryable<Document> sampleInput = null;
-            var matches = this.filter(
-                sampleInput,
-                "Test",
-                new Expression<Func<Document, string>>[] { d => d.Title });
+            Assert.Throws<ArgumentNullException>(() =>
+                this.filter(
+                    null,
+                    "Test",
+                    new Expression<Func<Document, string>>[] { d => d.Title }));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void GetMatches_NoProperties_ThrowsArgumentException()
         {
-            var matches = this.filter(
-                sampleInput,
-                "Test",
-                new Expression<Func<Document, string>>[] { });
+            Assert.Throws<ArgumentException>(() =>
+                this.filter(
+                    this.sampeInput,
+                    "Test",
+                    new Expression<Func<Document, string>>[] { }));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_NullAsSearchTerm_AllElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 null,
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(this.sampleInput.Count(), matches.ToArray().Length);
-            Assert.AreEqual(0, matches.Terms.Count());
+            Assert.Equal(this.sampeInput.Count(), matches.ToArray().Length);
+            Assert.Empty(matches.Terms);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_EmptySearchTerm_AllElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 string.Empty,
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(this.sampleInput.Count(), matches.ToArray().Length);
-            Assert.AreEqual(0, matches.Terms.Count());
+            Assert.Equal(this.sampeInput.Count(), matches.ToArray().Length);
+            Assert.Empty(matches.Terms);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidSearchException))]
+        [Fact]
         public void GetMatches_InvalidSearchTermMissingBracket_ThrowsInvalidSearchException()
         {
-            var matches = this.filter(
-                sampleInput,
+            Assert.Throws<InvalidSearchException>(() => this.filter(
+                this.sampeInput,
                 "(Test and Test",
-                new Expression<Func<Document, string>>[] { d => d.Title });
+                new Expression<Func<Document, string>>[] { d => d.Title }));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidSearchException))]
+        [Fact]
         public void GetMatches_InvalidSearchTermNotWithoutTerm_ThrowsInvalidSearchException()
         {
-            var matches = this.filter(
-                sampleInput,
+            Assert.Throws<InvalidSearchException>(() => this.filter(
+                this.sampeInput,
                 "not",
-                new Expression<Func<Document, string>>[] { d => d.Title });
-
-            Assert.AreEqual(0, matches.Terms.Count());
+                new Expression<Func<Document, string>>[] { d => d.Title }));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_SearchTermWithUmlaut_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInputSpecialCharacters,
+                this.sampeInputSpecialCharacters,
                 "ü",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(2, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(2, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
 
             matches = this.filter(
-               sampleInputSpecialCharacters,
+               this.sampeInputSpecialCharacters,
                "ß",
                new Expression<Func<Document, string>>[] { d => d.Title });
-            Assert.AreEqual(2, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(2, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_SingleWordAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Single(matches.Terms);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_SeveralWordsAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "seven ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "seven and ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "seven & ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Equal(2, matches.Terms.Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_SeveralOrWordsAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "seven or ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(4, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Equal(4, matches.ToArray().Length);
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "seven | ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(4, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Equal(4, matches.ToArray().Length);
+            Assert.Equal(2, matches.Terms.Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_ExcludeWordAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(9, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(9, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "- ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(9, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(9, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "-ten",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(9, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(9, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
         }
 
         /* Ignored since "Contains" is used for string comparision, which does not support case insensitivity.
          * But if IQueryable is used with EntityFramework, it will work */
-        [TestMethod]
-        [Ignore]
+        [Fact(Skip = "Only supported by EntityFramework")]
         public void GetMatches_MixedCaseAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "\"NiNe teN\"",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Single(matches.Terms);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_PhraseAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "\"nine ten\"",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Single(matches.Terms);
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "\"seven ten\"",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(0, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Empty(matches.ToArray());
+            Assert.Single(matches.Terms);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_ComplexExpressionsAsSearchTerm_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "(two or ten) and six",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(5, matches.ToArray().Length);
-            Assert.AreEqual(3, matches.Terms.Count());
+            Assert.Equal(5, matches.ToArray().Length);
+            Assert.Equal(3, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "two or ten and six",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(9, matches.ToArray().Length);
-            Assert.AreEqual(3, matches.Terms.Count());
+            Assert.Equal(9, matches.ToArray().Length);
+            Assert.Equal(3, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not (two or ten)",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not (three or ten) one",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(2, matches.ToArray().Length);
-            Assert.AreEqual(3, matches.Terms.Count());
+            Assert.Equal(2, matches.ToArray().Length);
+            Assert.Equal(3, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not (three or ten) not(two or ten)",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.ToArray().Length);
-            Assert.AreEqual(3, matches.Terms.Count());
+            Assert.Single(matches.ToArray());
+            Assert.Equal(3, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not (four or ten) not \"two three\"",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(2, matches.ToArray().Length);
-            Assert.AreEqual(3, matches.Terms.Count());
+            Assert.Equal(2, matches.ToArray().Length);
+            Assert.Equal(3, matches.Terms.Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_ServeralSearchProperties_CorrectElementsReturned()
         {
             var matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "two",
                 new Expression<Func<Document, string>>[] { d => d.Title, b => b.Name });
 
-            Assert.AreEqual(9, matches.ToArray().Length);
-            Assert.AreEqual(1, matches.Terms.Count());
+            Assert.Equal(9, matches.ToArray().Length);
+            Assert.Single(matches.Terms);
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "two de",
                 new Expression<Func<Document, string>>[] { d => d.Title, b => b.Name });
 
-            Assert.AreEqual(2, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Equal(2, matches.ToArray().Length);
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "two or abc",
                 new Expression<Func<Document, string>>[] { d => d.Title, b => b.Name });
 
-            Assert.AreEqual(10, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Equal(10, matches.ToArray().Length);
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "two not cd",
                 new Expression<Func<Document, string>>[] { d => d.Title, b => b.Name });
 
-            Assert.AreEqual(7, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Equal(7, matches.ToArray().Length);
+            Assert.Equal(2, matches.Terms.Count());
 
             matches = this.filter(
-                sampleInput,
+                this.sampeInput,
                 "not (two or abc)",
                 new Expression<Func<Document, string>>[] { d => d.Title, b => b.Name });
 
-            Assert.AreEqual(0, matches.ToArray().Length);
-            Assert.AreEqual(2, matches.Terms.Count());
+            Assert.Empty(matches.ToArray());
+            Assert.Equal(2, matches.Terms.Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void GetMatches_PhraseWithBrackets_CorrectTermParsed()
         {
             var matches = this.filter(
-                sampleInput, "\"(te(st) abc def)\"",
+                this.sampeInput,
+                "\"(te(st) abc def)\"",
                 new Expression<Func<Document, string>>[] { d => d.Title });
 
-            Assert.AreEqual(1, matches.Terms.Count());
-            Assert.AreEqual("(te(st) abc def)", matches.Terms.First());
+            Assert.Single(matches.Terms);
+            Assert.Equal("(te(st) abc def)", matches.Terms.First());
         }
     }
 }

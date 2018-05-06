@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using GenericSearch.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GenericSearch.Core
 {
-    [TestClass]
     public class EnumSearchTest
     {
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsEnum_CorrectResultReturned()
         {
             var criteria = new EnumSearch();
@@ -17,7 +16,7 @@ namespace GenericSearch.Core
 
             criteria.SearchTerm = MyEnum.First.ToString();
 
-            Assert.AreEqual(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
     }
 }

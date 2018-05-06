@@ -26,14 +26,12 @@ namespace GenericSearch.Core
 
                 if (propertyInfo != null)
                 {
-                    var displayAttribute = propertyInfo.GetCustomAttributes(true)
-                        .OfType<DisplayAttribute>()
-                        .Cast<DisplayAttribute>()
-                        .FirstOrDefault();
+                    var displayAttribute = propertyInfo
+                        .GetCustomAttribute<DisplayAttribute>();
 
                     if (displayAttribute != null)
                     {
-                        return displayAttribute.Name;
+                        return displayAttribute.GetName();
                     }
                 }
 
@@ -174,6 +172,7 @@ namespace GenericSearch.Core
                     Expression.Call(null, asQueryable, property),
                     Expression.Lambda(searchExpression, parameter));
             }
+
             return searchExpression;
         }
 

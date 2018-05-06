@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Html;
 
 namespace GenericSearch.UI
 {
     public static class HighlightingHtmlHelper
     {
-        private const string HighlighStart = "<span class=\"bg-primary\">";
+        private const string HighlighStart = "<span class=\"bg-info\">";
 
         private const string HighlighEnd = "</span>";
 
-        public static IHtmlString HighlightKeyWords(this string term, string keyword)
+        public static HtmlString HighlightKeyWords(this string term, string keyword)
         {
             return term.HighlightKeyWords(new[] { keyword });
         }
 
-        public static IHtmlString HighlightKeyWords(this string term, IEnumerable<string> keywords)
+        public static HtmlString HighlightKeyWords(this string term, IEnumerable<string> keywords)
         {
             if (keywords == null)
             {
-                throw new ArgumentNullException("keywords");
+                throw new ArgumentNullException(nameof(keywords));
             }
 
             if (term == null)
             {
-                return MvcHtmlString.Empty;
+                return HtmlString.Empty;
             }
 
             // Collect all characters that must be highlighted
@@ -78,7 +77,7 @@ namespace GenericSearch.UI
                 i += end - start;
             }
 
-            return MvcHtmlString.Create(term);
+            return new HtmlString(term);
         }
     }
 }

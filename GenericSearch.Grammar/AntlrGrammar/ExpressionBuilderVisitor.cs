@@ -17,12 +17,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public ExpressionBuilderVisitor(params MemberExpression[] properties)
         {
-            if (properties == null)
-            {
-                throw new ArgumentNullException("property");
-            }
-
-            this.properties = properties;
+            this.properties = properties ?? throw new ArgumentNullException(nameof(properties));
         }
 
         public override GrammarResult VisitOrExpression(SearchGrammarParser.OrExpressionContext context)
@@ -61,7 +56,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
         {
             if (context.ChildCount == 0)
             {
-                throw new InvalidSearchException("Der Suchbegriff ist ungültig:\r\n" + context.Parent.GetText());
+                throw new InvalidSearchException("The search term is invalid:\r\n" + context.Parent.GetText());
             }
 
             return base.VisitPrimaryExpression(context);
@@ -112,7 +107,7 @@ namespace GenericSearch.Grammar.AntlrGrammar
 
         public override GrammarResult VisitErrorNode(IErrorNode node)
         {
-            throw new InvalidSearchException("Der Suchbegriff ist ungültig:\r\n" + node);
+            throw new InvalidSearchException("The search term is invalid:\r\n" + node);
         }
 
         private Expression CreateTextExpression(string searchTerm)

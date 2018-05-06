@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using GenericSearch.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GenericSearch.Core
 {
-    [TestClass]
     public class NumericSearchTest
     {
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualInteger_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -17,10 +16,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.Equal;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_GreaterInteger_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -30,10 +29,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.Greater;
 
-            Assert.AreEqual(14, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(14, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_GreaterOrEqualInteger_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -43,10 +42,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.GreaterOrEqual;
 
-            Assert.AreEqual(16, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(16, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_LessInteger_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -56,10 +55,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 80;
             criteria.Comparator = NumericComparators.Less;
 
-            Assert.AreEqual(14, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(14, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_LessOrEqualInteger_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -69,10 +68,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 80;
             criteria.Comparator = NumericComparators.LessOrEqual;
 
-            Assert.AreEqual(16, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(16, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualIntegerNullable_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -82,10 +81,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.Equal;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_GreaterIntegerNullable_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -95,10 +94,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.Greater;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_GreaterOrEqualIntegerNullable_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -108,10 +107,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 10;
             criteria.Comparator = NumericComparators.GreaterOrEqual;
 
-            Assert.AreEqual(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_LessIntegerNullable_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -121,10 +120,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 20;
             criteria.Comparator = NumericComparators.Less;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_LessOrEqualIntegerNullable_CorrectResultReturned()
         {
             var criteria = new NumericSearch();
@@ -134,7 +133,7 @@ namespace GenericSearch.Core
             criteria.SearchTerm = 20;
             criteria.Comparator = NumericComparators.LessOrEqual;
 
-            Assert.AreEqual(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(4, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
     }
 }

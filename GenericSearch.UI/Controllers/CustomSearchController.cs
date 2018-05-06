@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
 using GenericSearch.Core;
 using GenericSearch.Data;
 using GenericSearch.UI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GenericSearch.UI.Controllers
 {
@@ -35,6 +35,7 @@ namespace GenericSearch.UI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Index(ICollection<AbstractSearch> searchCriteria)
         {
             var data = this.repository

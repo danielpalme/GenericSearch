@@ -1,55 +1,58 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Linq.Expressions;
+using System.Runtime.Serialization;
 
 namespace GenericSearch.Paging
 {
     /// <summary>
     /// Contains information necessary for paging and sorting.
-    /// <seealso cref="PagingExtensions"/>.
+    /// <seealso cref="PagingExtensions" />.
     /// </summary>
+    /// <typeparam name="T">The type.</typeparam>
     [DataContract]
-    public class Paging
+    public class Paging<T>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Paging"/> class.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
         /// </summary>
         public Paging()
-            : this(0, 5)
+            : this(0, int.MaxValue)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Paging" /> class.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
         /// </summary>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">Number of elements per page.</param>
-        public Paging(int pageIndex, int pageSize)
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
+        public Paging(int skip, int top)
         {
             this.SortDirection = SortDirection.Ascending;
-            this.PageIndex = pageIndex;
-            this.PageSize = pageSize;
+            this.Skip = skip;
+            this.Top = top;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Paging" /> class.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
         /// </summary>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">Number of elements per page.</param>
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
         /// <param name="sortColumn">The name of the property sorting should be applied to.</param>
-        public Paging(int pageIndex, int pageSize, string sortColumn)
-            : this(pageIndex, pageSize)
+        public Paging(int skip, int top, string sortColumn)
+            : this(skip, top)
         {
             this.SortColumn = sortColumn;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Paging" /> class.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
         /// </summary>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">Number of elements per page.</param>
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
         /// <param name="sortColumn">The name of the property sorting should be applied to.</param>
         /// <param name="sortDirection">The <see cref="SortDirection"/>.</param>
-        public Paging(int pageIndex, int pageSize, string sortColumn, SortDirection sortDirection)
-            : this(pageIndex, pageSize, sortColumn)
+        public Paging(int skip, int top, string sortColumn, SortDirection sortDirection)
+            : this(skip, top, sortColumn)
         {
             this.SortDirection = sortDirection;
         }
@@ -67,16 +70,25 @@ namespace GenericSearch.Paging
         public string SortColumn { get; set; }
 
         /// <summary>
-        /// Gets or sets the current page index.
+        /// Gets or sets the number of elements to skip.
         /// </summary>
         [DataMember]
-        public int PageIndex { get; set; }
+        public int Skip { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of elements per page.
+        /// Gets or sets the number of elements to retrieve.
         /// </summary>
         [DataMember]
-        public int PageSize { get; set; }
+        public int Top { get; set; }
+
+        /// <summary>
+        /// Sets the sort expression.
+        /// </summary>
+        /// <param name="expression">A lambda expression like 'n => n.PropertyName'.</param>
+        public void SetSortExpression(Expression<Func<T, object>> expression)
+        {
+            this.SortColumn = PropertyResolver.GetPropertyName(expression);
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -86,7 +98,7 @@ namespace GenericSearch.Paging
         /// </returns>
         public override string ToString()
         {
-            return "SortColumn: " + this.SortColumn + ", PageIndex: " + this.PageIndex + ", PageSize: " + this.PageSize;
+            return $"SortColumn: {this.SortColumn}, Top: {this.Top}, Skip: {this.Skip}";
         }
     }
 }

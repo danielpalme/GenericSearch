@@ -1,55 +1,48 @@
 ﻿@model GenericSearch.UI.Models.SearchViewModel
-
 @{
-    ViewBag.Title = "Custom Search Criteria";
+    ViewData["Title"] = "Custom Search Criteria";
 }
-
-<div class="row">
-    @using (Html.BeginForm("Index", "CustomSearch", FormMethod.Post, new { @class = "form-horizontal" }))
-    {
-        @Html.EditorFor(m => m.SearchCriteria)
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Apply filters</button>
-            </div>
+<form method="post">
+    @Html.EditorFor(m => m.SearchCriteria)
+    <div class="form-group row">
+        <div class="offset-sm-2 col-sm-10">
+            <button type="submit" class="btn btn-info">Apply filters</button>
         </div>
-    }
-    <hr/>
-</div>
-
-<div class="row">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>DateNullable</th>
-                <th>Integer</th>
-                <th>IntegerNullable</th>
-                <th>MyEnum</th>
-                <th>Text</th>
-                <th>CollectionString</th>
-                <th>Nested.TextNested</th>
-                <th>CollectionComplex</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                foreach (var item in this.Model.Data)
-                {
-                    <tr>
-                        <td>@item.Date</td>
-                        <td>@item.DateNullable</td>
-                        <td>@item.Integer</td>
-                        <td>@item.IntegerNullable</td>
-                        <td>@item.MyEnum</td>
-                        <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().First().SearchTerm)</td>
-                        <td>@string.Join(", ", item.CollectionString).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(1).First().SearchTerm)</td>
-                        <td>@{ if (item != null && item.Nested != null)
-                              {<text>@item.Nested.TextNested.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(2).First().SearchTerm)</text>} }</td>
-                        <td>@string.Join(", ", item.CollectionComplex.Select(i => i.TextNested)).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(3).First().SearchTerm)</td>
-                    </tr>
-                }
+    </div>
+</form>
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>DateNullable</th>
+            <th>Integer</th>
+            <th>IntegerNullable</th>
+            <th>MyEnum</th>
+            <th>Text</th>
+            <th>CollectionString</th>
+            <th>Nested.TextNested</th>
+            <th>CollectionComplex</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var item in this.Model.Data)
+            {
+                <tr>
+                    <td>@item.Date</td>
+                    <td>@item.DateNullable</td>
+                    <td>@item.Integer</td>
+                    <td>@item.IntegerNullable</td>
+                    <td>@item.MyEnum.GetDisplayName()</td>
+                    <td>@item.Text.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().First().SearchTerm)</td>
+                    <td>@string.Join(", ", item.CollectionString).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(1).First().SearchTerm)</td>
+                    <td>
+                        @{ if (item != null && item.Nested != null)
+                            {<text>@item.Nested.TextNested.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(2).First().SearchTerm)</text>} }
+                    </td>
+                    <td>@string.Join(", ", item.CollectionComplex.Select(i => i.TextNested)).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(3).First().SearchTerm)</td>
+                </tr>
             }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>

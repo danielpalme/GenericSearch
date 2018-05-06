@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using GenericSearch.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GenericSearch.Core
 {
-    [TestClass]
     public class TextSearchTest
     {
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_ContainsText_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -17,10 +16,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "abcdef";
             criteria.Comparator = TextComparators.Contains;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsText_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -30,10 +29,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "abcdef";
             criteria.Comparator = TextComparators.Equals;
 
-            Assert.AreEqual(1, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(1, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsNestedText_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -43,10 +42,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "qwerty";
             criteria.Comparator = TextComparators.Equals;
 
-            Assert.AreEqual(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(2, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsNestedNestedText_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -56,10 +55,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "qwerty";
             criteria.Comparator = TextComparators.Equals;
 
-            Assert.AreEqual(0, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(0, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsTextInCollectionSimple_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -69,10 +68,10 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "simple_123";
             criteria.Comparator = TextComparators.Equals;
 
-            Assert.AreEqual(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void ApplyToQuery_EqualsTextInCollectionComplex_CorrectResultReturned()
         {
             var criteria = new TextSearch();
@@ -82,7 +81,7 @@ namespace GenericSearch.Core
             criteria.SearchTerm = "complex_678";
             criteria.Comparator = TextComparators.Equals;
 
-            Assert.AreEqual(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
+            Assert.Equal(8, criteria.ApplyToQuery(new Repository().GetQuery()).Count());
         }
     }
 }

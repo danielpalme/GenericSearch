@@ -200,13 +200,13 @@ namespace GenericSearch.Data
                     dummyData[i].CollectionString.Add("simple_234");
 
                     dummyData[i].CollectionComplex.Add(new SomeNestedClass()
-                        {
-                            TextNested = "complex_678"
-                        });
+                    {
+                        TextNested = "complex_678"
+                    });
                     dummyData[i].CollectionComplex.Add(new SomeNestedClass()
-                        {
-                            TextNested = "complex_789"
-                        });
+                    {
+                        TextNested = "complex_789"
+                    });
                 }
                 else
                 {

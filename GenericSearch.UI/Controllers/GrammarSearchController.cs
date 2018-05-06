@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using System.Web.Mvc;
 using GenericSearch.Common;
 using GenericSearch.Data;
 using GenericSearch.Grammar;
 using GenericSearch.UI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GenericSearch.UI.Controllers
 {

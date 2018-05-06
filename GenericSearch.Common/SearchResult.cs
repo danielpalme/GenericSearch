@@ -10,18 +10,8 @@ namespace GenericSearch.Common
 
         public SearchResult(IQueryable<T> query, IEnumerable<string> terms)
         {
-            if (query == null)
-            {
-                throw new ArgumentNullException("query");
-            }
-
-            if (terms == null)
-            {
-                throw new ArgumentNullException("terms");
-            }
-
-            this.query = query;
-            this.Terms = terms;
+            this.query = query ?? throw new ArgumentNullException(nameof(query));
+            this.Terms = terms ?? throw new ArgumentNullException(nameof(terms));
         }
 
         public IEnumerable<string> Terms { get; private set; }

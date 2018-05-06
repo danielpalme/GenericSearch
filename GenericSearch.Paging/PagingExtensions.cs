@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace GenericSearch.Paging
 {
@@ -15,7 +17,7 @@ namespace GenericSearch.Paging
         /// <summary>
         /// The collection types that should be avoided for the sort column.
         /// </summary>
-        private static List<Type> collections = new List<Type>() { typeof(IEnumerable<>), typeof(IEnumerable) };
+        private static readonly List<Type> Collections = new List<Type>() { typeof(IEnumerable<>), typeof(IEnumerable) };
 
         /// <summary>
         /// Gets the paged result.
@@ -24,7 +26,7 @@ namespace GenericSearch.Paging
         /// <param name="query">The query.</param>
         /// <param name="paging">The paging.</param>
         /// <returns>The paged result.</returns>
-        public static PagedResult<T> GetPagedResult<T>(this IQueryable<T> query, Paging paging)
+        public static PagedResult<T> GetPagedResult<T>(this IQueryable<T> query, Paging<T> paging)
         {
             int count = query.Count();
 
@@ -32,19 +34,17 @@ namespace GenericSearch.Paging
         }
 
         /// <summary>
-        /// Gets the paged result and converts the result.
+        /// Gets the paged result.
         /// </summary>
-        /// <typeparam name="T1">The type of the query elements.</typeparam>
-        /// <typeparam name="T2">The resulting type of the conversion.</typeparam>
+        /// <typeparam name="T">The type.</typeparam>
         /// <param name="query">The query.</param>
         /// <param name="paging">The paging.</param>
-        /// <param name="convert">The convert.</param>
         /// <returns>The paged result.</returns>
-        public static PagedResult<T2> GetPagedResult<T1, T2>(this IQueryable<T1> query, Paging paging, Func<T1, T2> convert)
+        public static async Task<PagedResult<T>> GetPagedResultAsync<T>(this IQueryable<T> query, Paging<T> paging)
         {
-            int count = query.Count();
+            int count = await query.CountAsync();
 
-            return new PagedResult<T2>(query.SortAndPage(paging).AsEnumerable().Select(x => convert(x)).ToArray(), count, paging);
+            return new PagedResult<T>(await query.SortAndPage(paging).ToListAsync(), count, paging);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GenericSearch.Paging
         /// <param name="query">The query.</param>
         /// <param name="paging">The <see cref="Paging"/>.</param>
         /// <returns>The extended query.</returns>
-        public static IQueryable<T> SortAndPage<T>(this IQueryable<T> query, Paging paging)
+        public static IQueryable<T> SortAndPage<T>(this IQueryable<T> query, Paging<T> paging)
         {
             if (paging == null)
             {
@@ -65,7 +65,8 @@ namespace GenericSearch.Paging
             if (string.IsNullOrEmpty(paging.SortColumn))
             {
                 paging.SortColumn = typeof(T).GetProperties()
-                    .Where(p => p.PropertyType == typeof(string) || !p.PropertyType.GetInterfaces().Any(i => collections.Any(c => i == c)))
+                    .Where(p => p.PropertyType == typeof(string)
+                            || !p.PropertyType.GetInterfaces().Any(i => Collections.Any(c => i == c)))
                     .First()
                     .Name;
             }
@@ -97,7 +98,7 @@ namespace GenericSearch.Paging
 
             query = query.Provider.CreateQuery<T>(resultExpression);
 
-            return query.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+            return query.Skip(paging.Skip).Take(paging.Top);
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿@model GenericSearch.Core.TextSearch
-
-<div class="form-group">
-    @Html.LabelFor(m => m.SearchTerm, this.Model.LabelText, new { @class = "col-sm-2 control-label" })
+<div class="form-group row">
+    <label asp-for="SearchTerm" class="col-sm-2 control-label">@this.Model.LabelText</label>
     <div class="col-sm-2">
-        @Html.EnumDropDownListFor(m => m.Comparator, new { @class = "form-control" })
+        <select asp-for="Comparator" asp-items="Html.GetEnumSelectList(typeof(GenericSearch.Core.TextComparators))" class="form-control"></select>
     </div>
     <div class="col-sm-8">
-        @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control" })
+        <input asp-for="SearchTerm" class="form-control" />
     </div>
-
-    @Html.HiddenFor(m => m.Property)
-    @Html.HiddenFor(m => m.TargetTypeName)
-    @Html.Hidden("ModelTypeName", this.Model.GetType().AssemblyQualifiedName)
+    <input asp-for="Property" type="hidden" />
+    <input asp-for="TargetTypeName" type="hidden" />
+    <input name="@(ViewData.TemplateInfo.HtmlFieldPrefix + ".ModelTypeName")" type="hidden" value="@this.Model.GetType().AssemblyQualifiedName" />
 </div>

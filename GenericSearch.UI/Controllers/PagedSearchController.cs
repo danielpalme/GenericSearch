@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Web.Mvc;
 using GenericSearch.Core;
 using GenericSearch.Data;
 using GenericSearch.Paging;
 using GenericSearch.UI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GenericSearch.UI.Controllers
 {
@@ -16,13 +16,15 @@ namespace GenericSearch.UI.Controllers
             this.repository = new Repository();
         }
 
-        public ActionResult Index(GenericSearch.Paging.Paging paging, ICollection<AbstractSearch> searchCriteria)
+        public ActionResult Index(GenericSearch.Paging.Paging<SomeClass> paging, ICollection<AbstractSearch> searchCriteria)
         {
-            if (searchCriteria == null)
+            if (searchCriteria == null || searchCriteria.Count == 0)
             {
                 searchCriteria = typeof(GenericSearch.Data.SomeClass)
                     .GetDefaultSearchCriteria();
             }
+
+            paging.Top = 5;
 
             var data = this.repository
                 .GetQuery()

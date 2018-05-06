@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -24,7 +24,7 @@ namespace GenericSearch.Paging
         /// <param name="items">The items.</param>
         /// <param name="totalNumberOfItems">The total number of items.</param>
         /// <param name="paging">The paging.</param>
-        public PagedResult(IEnumerable<T> items, int totalNumberOfItems, Paging paging)
+        public PagedResult(IEnumerable<T> items, int totalNumberOfItems, Paging<T> paging)
         {
             this.Items = items;
             this.TotalNumberOfItems = totalNumberOfItems;
@@ -37,52 +37,20 @@ namespace GenericSearch.Paging
         [DataMember]
         public IEnumerable<T> Items { get; private set; }
 
+        public Paging<T> Paging { get; private set; }
+
         /// <summary>
         /// Gets the total number of items.
         /// </summary>
         [DataMember]
         public int TotalNumberOfItems { get; private set; }
 
-        /// <summary>
-        /// Gets the total number of pages.
-        /// </summary>
-        /// <value>The total number of pages.</value>
-        [IgnoreDataMember]
-        public int TotalNumberOfPages
-        {
-            get
-            {
-                if (this.Paging == null || this.Paging.PageSize <= 0)
-                {
-                    return 0;
-                }
-
-                return (int)Math.Ceiling((double)this.TotalNumberOfItems / this.Paging.PageSize);
-            }
-        }
-
-        /// <summary>
-        /// Gets the paging.
-        /// </summary>
-        [DataMember]
-        public Paging Paging { get; private set; }
-
-        /// <summary>
-        /// Gets the enumerator.
-        /// </summary>
-        /// <returns>The enumerator.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return this.Items.GetEnumerator();
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return this.Items.GetEnumerator();
         }

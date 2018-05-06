@@ -2,43 +2,45 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - GenericSearch</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GenericSearch</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <environment include="Development">
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
 </head>
 <body>
-    <div class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("GenericSearch", "Index", "DefaultSearch", null, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @{
-                        object key = null;
-                        this.Url.RequestContext.RouteData.Values.TryGetValue("controller", out key);
-                    }
-                    <li class="@Html.Raw(key.ToString() == "DefaultSearch" ? "active" : "")">@Html.ActionLink("Default Search Criteria", "Index", "DefaultSearch")</li>
-                    <li class="@Html.Raw(key.ToString() == "CustomSearch" ? "active" : "")">@Html.ActionLink("Custom Search Criteria", "Index", "CustomSearch")</li>
-                    <li class="@Html.Raw(key.ToString() == "PagedSearch" ? "active" : "")">@Html.ActionLink("Paged Search", "Index", "PagedSearch")</li>
-                    <li class="@Html.Raw(key.ToString() == "GrammarSearch" ? "active" : "")">@Html.ActionLink("Grammar Search", "Index", "GrammarSearch")</li>
-                </ul>
-            </div>
+            <a asp-area="" asp-controller="DefaultSearch" asp-action="Index" class="navbar-brand">GenericSearch</a>
+            <ul class="navbar-nav mr-auto">
+                @{
+                    object key = null;
+                    this.Url.ActionContext.RouteData.Values.TryGetValue("controller", out key);
+                }
+                <li class="nav-item @(key.ToString() == "DefaultSearch" ? " active" : "")"><a asp-area="" asp-controller="DefaultSearch" asp-action="Index" class="nav-link">Default Search Criteria</a></li>
+                <li class="nav-item@(key.ToString() == "CustomSearch" ? " active" : "")"><a asp-area="" asp-controller="CustomSearch" asp-action="Index" class="nav-link">Custom Search Criteria</a></li>
+                <li class="nav-item@(key.ToString() == "PagedSearch" ? " active" : "")"><a asp-area="" asp-controller="PagedSearch" asp-action="Index" class="nav-link">Paged Search</a></li>
+                <li class="nav-item@(key.ToString() == "GrammarSearch" ? " active" : "")"><a asp-area="" asp-controller="GrammarSearch" asp-action="Index" class="nav-link">Grammar Search</a></li>
+            </ul>
         </div>
-    </div>
+    </nav>
     <div class="container body-content">
-        <h1>@ViewBag.Title</h1>
         @RenderBody()
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    <script src="~/lib/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <environment include="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
 </body>
 </html>

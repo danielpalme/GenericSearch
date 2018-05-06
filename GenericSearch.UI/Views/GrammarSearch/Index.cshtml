@@ -1,14 +1,10 @@
 ﻿@model GenericSearch.UI.Models.GrammarSearchViewModel
-
 @{
-    ViewBag.Title = "Grammar Search";
+    ViewData["Title"] = "Grammar Search";
 }
-
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h3 class="panel-title">Grammar</h3>
-    </div>
-    <div class="panel-body">
+<div class="card border-info">
+    <div class="card-body">
+        <h5 class="card-title">Grammar</h5>
         You can use the following operators:
         <ul>
             <li>' ', 'and', '&': Searches for <strong>all</strong> keywords.<br><strong>Sample</strong>: <i>ab & ef</i></li>
@@ -18,65 +14,56 @@
         </ul>
     </div>
 </div>
-
-<div class="row">
-    @using (Html.BeginForm("Index", "GrammarSearch", FormMethod.Post, new { @class = "form-horizontal" }))
-    {
-        <div class="form-group">
-            @Html.LabelFor(m => m.SearchTerm, new { @class = "col-sm-2 control-label" })
-            <div class="col-sm-2">
-                @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control" })
-            </div>
-            <div class="col-sm-8">
-                @Html.ValidationMessageFor(m => m.SearchTerm)
-            </div>
+<br />
+<form method="post">
+    <div class="form-group row">
+        <label asp-for="SearchTerm" class="col-sm-2 control-label"></label>
+        <div class="col-sm-2">
+            <input asp-for="SearchTerm" class="form-control" />
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Grammar, new { @class = "col-sm-2 control-label" })
-            <div class="col-sm-2">
-                @Html.EnumDropDownListFor(m => m.Grammar, new { @class = "form-control" })
-            </div>
-            <div class="col-sm-8">
-                @Html.ValidationMessageFor(m => m.Grammar)
-            </div>
+        <div class="col-sm-8">
+            <span asp-validation-for="SearchTerm"></span>
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Apply filters</button>
-            </div>
+    <div class="form-group row">
+        <label asp-for="Grammar" class="col-sm-2 control-label"></label>
+        <div class="col-sm-2">
+            <select asp-for="Grammar" asp-items="Html.GetEnumSelectList(typeof(Grammar))" class="form-control"></select>
         </div>
-    }
-    <hr />
-</div>
+        <div class="col-sm-8">
+            <span asp-validation-for="Grammar"></span>
+        </div>
+    </div>
 
+    <div class="form-group row">
+        <div class="offset-sm-2 col-sm-10">
+            <button type="submit" class="btn btn-info">Apply filters</button>
+        </div>
+    </div>
+</form>
 @if (this.Model.Terms != null && this.Model.Terms.Any())
 {
     string text = string.Join(", ", this.Model.Terms);
-    
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">Terms</h3>
-        </div>
-        <div class="panel-body">
+
+    <div class="card border-info">
+        <div class="card-body">
+            <h3 class="card-title">Terms</h3>
             @text
         </div>
     </div>
 }
-
-<div class="row">
-    <table class="table table-striped">
-        <thead><tr><th>Text</th></tr></thead>
-        <tbody>
-            @{
-                foreach (var item in this.Model.Data)
-                {
-                    <tr>
-                        <td>@item.Text.HighlightKeyWords(this.Model.Terms)</td>
-                    </tr>
-                }
+<br />
+<table class="table table-striped table-sm">
+    <thead><tr><th>Text</th></tr></thead>
+    <tbody>
+        @{
+            foreach (var item in this.Model.Data)
+            {
+                <tr>
+                    <td>@item.Text.HighlightKeyWords(this.Model.Terms)</td>
+                </tr>
             }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>

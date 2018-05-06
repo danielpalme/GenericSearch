@@ -1,5 +1,4 @@
-﻿
-namespace GenericSearch.Grammar.Test
+﻿namespace GenericSearch.Grammar.Test
 {
     public class Document
     {

@@ -1,40 +1,48 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Web.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace GenericSearch.UI
 {
-    public class AbstractSearchModelBinder : DefaultModelBinder
+    public class AbstractSearchModelBinder : IModelBinder
     {
-        protected override object CreateModel(ControllerContext controllerContext, ModelBindingContext bindingContext, Type modelType)
+        private readonly IDictionary<Type, ComplexTypeModelBinder> modelBuilderByType;
+
+        private readonly IModelMetadataProvider modelMetadataProvider;
+
+        public AbstractSearchModelBinder(IDictionary<Type, ComplexTypeModelBinder> modelBuilderByType, IModelMetadataProvider modelMetadataProvider)
         {
-            var derivedModelType = GetDerivedType(controllerContext, bindingContext);
-
-            if (derivedModelType == null)
-            {
-                throw new InvalidOperationException("Invalid ModelTypeName");
-            }
-
-            return base.CreateModel(controllerContext, bindingContext, derivedModelType);
+            this.modelBuilderByType = modelBuilderByType ?? throw new ArgumentNullException(nameof(modelBuilderByType));
+            this.modelMetadataProvider = modelMetadataProvider ?? throw new ArgumentNullException(nameof(modelMetadataProvider));
         }
 
-        protected override System.ComponentModel.PropertyDescriptorCollection GetModelProperties(ControllerContext controllerContext, ModelBindingContext bindingContext)
+        public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            return TypeDescriptor.GetProperties(GetDerivedType(controllerContext, bindingContext));
-        }
+            var modelTypeValue = bindingContext.ValueProvider.GetValue(ModelNames.CreatePropertyModelName(bindingContext.ModelName, "ModelTypeName"));
 
-        private static Type GetDerivedType(ControllerContext controllerContext, ModelBindingContext bindingContext)
-        {
-            var modelTypeValue = controllerContext.Controller.ValueProvider.GetValue(bindingContext.ModelName + ".ModelTypeName");
-
-            if (modelTypeValue == null)
+            if (modelTypeValue != null && modelTypeValue.FirstValue != null)
             {
-                throw new InvalidOperationException("View does not contain ModelTypeName");
+                Type modelType = Type.GetType(modelTypeValue.FirstValue);
+                if (this.modelBuilderByType.TryGetValue(modelType, out var modelBinder))
+                {
+                    ModelBindingContext innerModelBindingContext = DefaultModelBindingContext.CreateBindingContext(
+                        bindingContext.ActionContext,
+                        bindingContext.ValueProvider,
+                        this.modelMetadataProvider.GetMetadataForType(modelType),
+                        null,
+                        bindingContext.ModelName);
+
+                    modelBinder.BindModelAsync(innerModelBindingContext);
+
+                    bindingContext.Result = innerModelBindingContext.Result;
+                    return Task.CompletedTask;
+                }
             }
 
-            string modelTypeName = modelTypeValue.AttemptedValue;
-
-            return Type.GetType(modelTypeName);
+            bindingContext.Result = ModelBindingResult.Failed();
+            return Task.CompletedTask;
         }
     }
 }

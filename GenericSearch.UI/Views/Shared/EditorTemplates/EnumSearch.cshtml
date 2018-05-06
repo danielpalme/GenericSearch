@@ -1,38 +1,21 @@
 ﻿@model GenericSearch.Core.EnumSearch
-
 @{
-    var enumMembers = Enum.GetValues(this.Model.EnumType);
-    string[] enumNames = Enum.GetNames(this.Model.EnumType);
-    SelectListItem[] items = new SelectListItem[enumNames.Length + 1];
-    items[0] = new SelectListItem()
+    IEnumerable<SelectListItem> items = new[]
     {
-        Text = "-",
-        Value = string.Empty
-    };
-    
-    for (int i = 0; i < enumNames.Length; i++)
-    {
-        var display = this.Model.EnumType.GetMember(enumNames[i])[0].GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), true).Cast<System.ComponentModel.DataAnnotations.DisplayAttribute>().FirstOrDefault();
-        if (display != null)
-        {
-            enumNames[i] = display.Name;
-        }
-
-        items[i + 1] = new SelectListItem()
-        {
-            Text = enumNames[i],
-            Value = enumMembers.GetValue(i).ToString()
-        };
-    }
+new SelectListItem()
+{
+Text = "-",
+Value = string.Empty
 }
-
-<div class="form-group">
-    @Html.LabelFor(m => m.SearchTerm, this.Model.LabelText, new { @class = "col-sm-2 control-label" })
-    <div class="col-sm-8 col-sm-offset-2">
-        @Html.DropDownListFor(m => m.SearchTerm, items, new { @class = "form-control" })
+}.Concat(Html.GetEnumSelectList(this.Model.EnumType));
+}
+<div class="form-group row">
+    <label asp-for="SearchTerm" class="col-sm-2 control-label">@this.Model.LabelText</label>
+    <div class="col-sm-8 offset-sm-2">
+        <select asp-for="SearchTerm" asp-items="items" class="form-control"></select>
     </div>
-    @Html.HiddenFor(m => m.Property)
-    @Html.HiddenFor(m => m.EnumTypeName)
-    @Html.HiddenFor(m => m.TargetTypeName)
-    @Html.Hidden("ModelTypeName", this.Model.GetType().AssemblyQualifiedName)
+    <input asp-for="Property" type="hidden" />
+    <input asp-for="EnumTypeName" type="hidden" />
+    <input asp-for="TargetTypeName" type="hidden" />
+    <input name="@(ViewData.TemplateInfo.HtmlFieldPrefix + ".ModelTypeName")" type="hidden" value="@this.Model.GetType().AssemblyQualifiedName" />
 </div>

@@ -1,40 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GenericSearch.Core.Test
 {
-    [TestClass]
     public class TypeExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void IsNullableType_PassNotNullableType_FalseReturned()
         {
-            Assert.IsFalse(typeof(int).IsNullableType());
+            Assert.False(typeof(int).IsNullableType());
         }
 
-        [TestMethod]
+        [Fact]
         public void IsNullableType_PassNullableType_TrueReturned()
         {
-            Assert.IsTrue(typeof(int?).IsNullableType());
+            Assert.True(typeof(int?).IsNullableType());
         }
 
-        [TestMethod]
+        [Fact]
         public void IsCollectionType_PassIEnumerable_TrueReturned()
         {
-            Assert.IsTrue(typeof(IEnumerable<int>).IsCollectionType());
+            Assert.True(typeof(IEnumerable<int>).IsCollectionType());
         }
 
-        [TestMethod]
+        [Fact]
         public void IsCollectionType_PassList_TrueReturned()
         {
-            Assert.IsTrue(typeof(List<int>).IsCollectionType());
+            Assert.True(typeof(List<int>).IsCollectionType());
         }
 
-        [TestMethod]
+        [Fact]
         public void IsCollectionType_PassCollection_TrueReturned()
         {
-            Assert.IsTrue(typeof(Collection<int>).IsCollectionType());
+            Assert.True(typeof(Collection<int>).IsCollectionType());
         }
     }
 }
