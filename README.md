@@ -11,6 +11,7 @@ See this blog post for details:
 * Grammar based search (created with [Antlr](http://www.antlr.org) and [Irony](https://irony.codeplex.com))
 
 **Screenshot:**
+
 ![Screenshot](http://www.palmmedia.de/content/blogimages/5683e366-3611-414c-8b9e-546efed6aa50.png)
 
 
