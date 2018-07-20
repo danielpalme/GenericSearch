@@ -11,21 +11,21 @@ namespace GenericSearch.UI
         {
             var query = QueryHelpers.ParseQuery(url);
 
-            var items = new Dictionary<string, string>(query.SelectMany(x => x.Value, (col, value) => new KeyValuePair<string, string>(col.Key, value)));
+            var items = query
+                .SelectMany(x => x.Value, (col, value) => new KeyValuePair<string, string>(col.Key, value))
+                .ToList();
 
-            foreach (var value in values.Where(v => !string.IsNullOrEmpty(v.Value)))
+            foreach (var value in values)
             {
-                if (string.IsNullOrEmpty(value.Value))
+                items.RemoveAll(i => i.Key == value.Key);
+                if (!string.IsNullOrEmpty(value.Value))
                 {
-                    items.Remove(value.Key);
-                }
-                else
-                {
-                    items[value.Key] = value.Value;
+                    items.Add(value);
                 }
             }
 
             return new QueryBuilder(items).ToQueryString().Value;
         }
     }
+
 }
