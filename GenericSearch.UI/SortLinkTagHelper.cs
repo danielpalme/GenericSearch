@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace GenericSearch.UI
 {
-    [HtmlTargetElement("a")]
+    [HtmlTargetElement("a", Attributes = "paging,property-name")]
     public class SortLinkTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor httpContextAccessor;
