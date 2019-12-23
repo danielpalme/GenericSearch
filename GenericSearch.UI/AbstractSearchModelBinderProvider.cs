@@ -4,6 +4,8 @@ using System.Linq;
 using GenericSearch.Core;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GenericSearch.UI
 {
@@ -36,7 +38,8 @@ namespace GenericSearch.UI
                         propertyBinders.Add(property, context.CreateBinder(property));
                     }
 
-                    modelBuilderByType.Add(type, new ComplexTypeModelBinder(propertyBinders));
+                    var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
+                    modelBuilderByType.Add(type, new ComplexTypeModelBinder(propertyBinders, loggerFactory));
                 }
 
                 return new AbstractSearchModelBinder(modelBuilderByType, context.MetadataProvider);
