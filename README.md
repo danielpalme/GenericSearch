@@ -12,7 +12,7 @@ See this blog post for details:
 
 **Screenshot:**
 
-![Screenshot](https://www.palmmedia.de/content/blogimages/5683e366-3611-414c-8b9e-546efed6aa50.png)
+![Screenshot](https://www.palmmedia.de/blogimages/5683e366-3611-414c-8b9e-546efed6aa50.png)
 
 
 Author: Daniel Palme  
