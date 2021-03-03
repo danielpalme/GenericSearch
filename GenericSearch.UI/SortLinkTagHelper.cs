@@ -36,8 +36,8 @@ namespace GenericSearch.UI
             SortDirection sortDirection = SortDirection.Ascending;
 
             if (this.Paging != null
-                && this.PropertyName.Equals(this.Paging.SortColumn)
-                && this.Paging.SortDirection == SortDirection.Ascending)
+                && this.PropertyName.Equals(this.Paging.SortCriteria.SortColumn)
+                && this.Paging.SortCriteria.SortDirection == SortDirection.Ascending)
             {
                 sortDirection = SortDirection.Descending;
             }

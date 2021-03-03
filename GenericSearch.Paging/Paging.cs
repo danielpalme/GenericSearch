@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 
@@ -27,9 +28,9 @@ namespace GenericSearch.Paging
         /// <param name="top">The number of elements to retrieve.</param>
         public Paging(int skip, int top)
         {
-            this.SortDirection = SortDirection.Ascending;
             this.Skip = skip;
             this.Top = top;
+            this.SortCriteria = new SortCriteria<T>();
         }
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace GenericSearch.Paging
         public Paging(int skip, int top, string sortColumn)
             : this(skip, top)
         {
-            this.SortColumn = sortColumn;
+            this.SortCriteria = new SortCriteria<T>(sortColumn);
         }
 
         /// <summary>
@@ -52,22 +53,56 @@ namespace GenericSearch.Paging
         /// <param name="sortColumn">The name of the property sorting should be applied to.</param>
         /// <param name="sortDirection">The <see cref="SortDirection"/>.</param>
         public Paging(int skip, int top, string sortColumn, SortDirection sortDirection)
-            : this(skip, top, sortColumn)
+            : this(skip, top)
         {
-            this.SortDirection = sortDirection;
+            this.SortCriteria = new SortCriteria<T>(sortColumn, sortDirection);
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="SortDirection"/>.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
         /// </summary>
-        [DataMember]
-        public SortDirection SortDirection { get; set; }
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
+        /// <param name="sortExpression">A lambda expression like 'n => n.PropertyName'.</param>
+        public Paging(int skip, int top, Expression<Func<T, object>> sortExpression)
+            : this(skip, top)
+        {
+            this.SortCriteria = new SortCriteria<T>(sortExpression);
+        }
 
         /// <summary>
-        /// Gets or sets the name of the property sorting should be applied to.
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
+        /// </summary>
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
+        /// <param name="sortExpression">A lambda expression like 'n => n.PropertyName'.</param>
+        /// <param name="sortDirection">The <see cref="SortDirection"/>.</param>
+        public Paging(int skip, int top, Expression<Func<T, object>> sortExpression, SortDirection sortDirection)
+            : this(skip, top)
+        {
+            this.SortCriteria = new SortCriteria<T>(sortExpression, sortDirection);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Paging{T}"/> class.
+        /// </summary>
+        /// <param name="skip">The number of elements to skip.</param>
+        /// <param name="top">The number of elements to retrieve.</param>
+        /// <param name="sortCriteria">The sort criteria.</param>
+        public Paging(int skip, int top, SortCriteria<T> sortCriteria)
+            : this(skip, top)
+        {
+            this.SortCriteria = sortCriteria ?? throw new ArgumentNullException(nameof(sortCriteria));
+        }
+
+        /// <summary>
+        /// Gets or sets the sort criteria.
         /// </summary>
         [DataMember]
-        public string SortColumn { get; set; }
+        public SortCriteria<T> SortCriteria { get; }
+
+        [DataMember]
+        public List<SortCriteria<T>> AddtionalSortCriteria { get; } = new List<SortCriteria<T>>();
 
         /// <summary>
         /// Gets or sets the number of elements to skip.
@@ -82,15 +117,6 @@ namespace GenericSearch.Paging
         public int Top { get; set; }
 
         /// <summary>
-        /// Sets the sort expression.
-        /// </summary>
-        /// <param name="expression">A lambda expression like 'n => n.PropertyName'.</param>
-        public void SetSortExpression(Expression<Func<T, object>> expression)
-        {
-            this.SortColumn = PropertyResolver.GetPropertyName(expression);
-        }
-
-        /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>
@@ -98,7 +124,7 @@ namespace GenericSearch.Paging
         /// </returns>
         public override string ToString()
         {
-            return $"SortColumn: {this.SortColumn}, Top: {this.Top}, Skip: {this.Skip}";
+            return $"SortColumn: {this.SortCriteria.SortColumn}, Top: {this.Top}, Skip: {this.Skip}";
         }
     }
 }
