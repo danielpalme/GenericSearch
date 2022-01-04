@@ -1,6 +1,6 @@
 # GenericSearch
 
-Generic search for IQueryable in ASP.NET MVC.
+Generic search for IQueryable in ASP.NET MVC Core.
 
 See this blog post for details:  
 [www.palmmedia.de/blog/2012/2/18/aspnet-mvc-generic-filtering-based-on-expressions](https://www.palmmedia.de/blog/2012/2/18/aspnet-mvc-generic-filtering-based-on-expressions)

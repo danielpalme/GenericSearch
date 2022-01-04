@@ -22,7 +22,7 @@ namespace GenericSearch.UI
         {
             var modelTypeValue = bindingContext.ValueProvider.GetValue(ModelNames.CreatePropertyModelName(bindingContext.ModelName, "ModelTypeName"));
 
-            if (modelTypeValue != null && modelTypeValue.FirstValue != null)
+            if (modelTypeValue.FirstValue != null)
             {
                 Type modelType = Type.GetType(modelTypeValue.FirstValue);
                 if (this.modelBuilderByType.TryGetValue(modelType, out var modelBinder))
