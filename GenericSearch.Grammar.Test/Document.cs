@@ -1,9 +1,8 @@
-﻿namespace GenericSearch.Grammar.Test
-{
-    public class Document
-    {
-        public string Title { get; set; }
+﻿namespace GenericSearch.Grammar.Test;
 
-        public string Name { get; set; }
-    }
+public class Document
+{
+    public string? Title { get; set; }
+
+    public string? Name { get; set; }
 }

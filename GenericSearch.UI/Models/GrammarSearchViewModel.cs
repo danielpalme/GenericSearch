@@ -1,23 +1,21 @@
-﻿using System.Collections.Generic;
-using GenericSearch.Data;
+﻿using GenericSearch.Data;
 
-namespace GenericSearch.UI.Models
+namespace GenericSearch.UI.Models;
+
+public enum Grammar
 {
-    public enum Grammar
-    {
-        Antlr,
+    Antlr,
 
-        Irony
-    }
+    Irony
+}
 
-    public class GrammarSearchViewModel
-    {
-        public IEnumerable<SomeClass> Data { get; set; }
+public class GrammarSearchViewModel
+{
+    public IEnumerable<SomeClass> Data { get; set; } = new List<SomeClass>();
 
-        public string SearchTerm { get; set; }
+    public string? SearchTerm { get; set; }
 
-        public Grammar Grammar { get; set; }
+    public Grammar Grammar { get; set; }
 
-        public IEnumerable<string> Terms { get; set; }
-    }
+    public IEnumerable<string> Terms { get; set; } = new List<string>();
 }

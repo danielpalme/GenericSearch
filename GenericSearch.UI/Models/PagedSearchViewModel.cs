@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
-using GenericSearch.Core;
+﻿using GenericSearch.Core;
 using GenericSearch.Data;
 using GenericSearch.Paging;
 
-namespace GenericSearch.UI.Models
-{
-    public class PagedSearchViewModel
-    {
-        public PagedResult<SomeClass> Data { get; set; }
+namespace GenericSearch.UI.Models;
 
-        public IEnumerable<AbstractSearch> SearchCriteria { get; set; }
+public class PagedSearchViewModel
+{
+    public PagedSearchViewModel(PagedResult<SomeClass> data, IEnumerable<AbstractSearch> searchCriteria)
+    {
+        this.Data = data;
+        this.SearchCriteria = searchCriteria;
     }
+
+    public PagedResult<SomeClass> Data { get; set; }
+
+    public IEnumerable<AbstractSearch> SearchCriteria { get; set; }
 }

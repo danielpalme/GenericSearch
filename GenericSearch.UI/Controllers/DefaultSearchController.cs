@@ -5,49 +5,48 @@ using GenericSearch.Data;
 using GenericSearch.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GenericSearch.UI.Controllers
+namespace GenericSearch.UI.Controllers;
+
+public class DefaultSearchController : Controller
 {
-    public class DefaultSearchController : Controller
+    private readonly Repository repository;
+
+    public DefaultSearchController()
     {
-        private readonly Repository repository;
+        this.repository = new Repository();
+    }
 
-        public DefaultSearchController()
+    public ActionResult Index()
+    {
+        var data = this.repository
+            .GetQuery()
+            .ToArray();
+
+        var model = new SearchViewModel()
         {
-            this.repository = new Repository();
-        }
+            Data = data,
+            SearchCriteria = typeof(GenericSearch.Data.SomeClass)
+                .GetDefaultSearchCriteria()
+        };
 
-        public ActionResult Index()
+        return this.View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Index(ICollection<AbstractSearch> searchCriteria)
+    {
+        var data = this.repository
+            .GetQuery()
+            .ApplySearchCriteria(searchCriteria)
+            .ToArray();
+
+        var model = new SearchViewModel()
         {
-            var data = this.repository
-                .GetQuery()
-                .ToArray();
+            Data = data,
+            SearchCriteria = searchCriteria
+        };
 
-            var model = new SearchViewModel()
-            {
-                Data = data,
-                SearchCriteria = typeof(GenericSearch.Data.SomeClass)
-                    .GetDefaultSearchCriteria()
-            };
-
-            return this.View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Index(ICollection<AbstractSearch> searchCriteria)
-        {
-            var data = this.repository
-                .GetQuery()
-                .ApplySearchCriteria(searchCriteria)
-                .ToArray();
-
-            var model = new SearchViewModel()
-            {
-                Data = data,
-                SearchCriteria = searchCriteria
-            };
-
-            return this.View(model);
-        }
+        return this.View(model);
     }
 }

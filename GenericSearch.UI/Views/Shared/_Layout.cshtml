@@ -18,13 +18,16 @@
             <a asp-area="" asp-controller="DefaultSearch" asp-action="Index" class="navbar-brand">GenericSearch</a>
             <ul class="navbar-nav mr-auto">
                 @{
-                    object key = null;
-                    this.Url.ActionContext.RouteData.Values.TryGetValue("controller", out key);
+                    string key = string.Empty;
+                    if (this.Url.ActionContext.RouteData.Values.TryGetValue("controller", out object? value))
+                    {
+                        key = value!.ToString()!;
+                    }
                 }
-                <li class="nav-item @(key.ToString() == "DefaultSearch" ? " active" : "")"><a asp-area="" asp-controller="DefaultSearch" asp-action="Index" class="nav-link">Default Search Criteria</a></li>
-                <li class="nav-item@(key.ToString() == "CustomSearch" ? " active" : "")"><a asp-area="" asp-controller="CustomSearch" asp-action="Index" class="nav-link">Custom Search Criteria</a></li>
-                <li class="nav-item@(key.ToString() == "PagedSearch" ? " active" : "")"><a asp-area="" asp-controller="PagedSearch" asp-action="Index" class="nav-link">Paged Search</a></li>
-                <li class="nav-item@(key.ToString() == "GrammarSearch" ? " active" : "")"><a asp-area="" asp-controller="GrammarSearch" asp-action="Index" class="nav-link">Grammar Search</a></li>
+                <li class="nav-item @(key == "DefaultSearch" ? " active" : "")"><a asp-area="" asp-controller="DefaultSearch" asp-action="Index" class="nav-link">Default Search Criteria</a></li>
+                <li class="nav-item@(key == "CustomSearch" ? " active" : "")"><a asp-area="" asp-controller="CustomSearch" asp-action="Index" class="nav-link">Custom Search Criteria</a></li>
+                <li class="nav-item@(key == "PagedSearch" ? " active" : "")"><a asp-area="" asp-controller="PagedSearch" asp-action="Index" class="nav-link">Paged Search</a></li>
+                <li class="nav-item@(key == "GrammarSearch" ? " active" : "")"><a asp-area="" asp-controller="GrammarSearch" asp-action="Index" class="nav-link">Grammar Search</a></li>
             </ul>
         </div>
     </nav>

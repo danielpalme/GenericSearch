@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using GenericSearch.Core;
+﻿using GenericSearch.Core;
 using GenericSearch.Data;
 
-namespace GenericSearch.UI.Models
-{
-    public class SearchViewModel
-    {
-        public IEnumerable<SomeClass> Data { get; set; }
+namespace GenericSearch.UI.Models;
 
-        public IEnumerable<AbstractSearch> SearchCriteria { get; set; }
-    }
+public class SearchViewModel
+{
+    public IEnumerable<SomeClass> Data { get; set; } = new List<SomeClass>();
+
+    public IEnumerable<AbstractSearch> SearchCriteria { get; set; } = new List<AbstractSearch>();
 }

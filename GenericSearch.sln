@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2037
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericSearch.Core", "GenericSearch.Core\GenericSearch.Core.csproj", "{4B94E3F9-ECF8-4D0B-8BAB-503E1B3FF79E}"
 EndProject
@@ -19,7 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericSearch.Grammar.Test"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grammar", "Grammar", "{B1F2FFF2-3CEA-41EA-9FE1-7CEA22045007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericSearch.UI", "GenericSearch.UI\GenericSearch.UI.csproj", "{060C2113-3CDC-4469-9F65-40F88BA382B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericSearch.UI", "GenericSearch.UI\GenericSearch.UI.csproj", "{060C2113-3CDC-4469-9F65-40F88BA382B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EEF8CA42-23D7-49C4-B781-A112EB7C25A6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		stylecop.ruleset = stylecop.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

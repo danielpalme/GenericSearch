@@ -1,10 +1,9 @@
-﻿namespace GenericSearch.Grammar.Test
+﻿namespace GenericSearch.Grammar.Test;
+
+public class SearchExtensions_IronyTest : SearchExtensions_TestBase
 {
-    public class SearchExtensions_IronyTest : SearchExtensions_TestBase
+    public SearchExtensions_IronyTest()
+        : base(SearchExtensions_Irony.FilterUsingIrony)
     {
-        public SearchExtensions_IronyTest()
-            : base(SearchExtensions_Irony.FilterUsingIrony)
-        {
-        }
     }
 }

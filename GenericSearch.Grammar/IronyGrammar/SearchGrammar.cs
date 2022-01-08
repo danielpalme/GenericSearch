@@ -18,9 +18,9 @@ namespace GenericSearch.Grammar.IronyGrammar
             var phrase = new StringLiteral("Phrase", "\"");
 
             // Keywords
-            KeyTerm and = ToTerm("AND");
-            KeyTerm or = ToTerm("OR");
-            KeyTerm not = ToTerm("NOT");
+            KeyTerm and = this.ToTerm("AND");
+            KeyTerm or = this.ToTerm("OR");
+            KeyTerm not = this.ToTerm("NOT");
 
             // Set precedence of operators.
             this.RegisterOperators(1, not);

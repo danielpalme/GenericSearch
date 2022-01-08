@@ -26,7 +26,7 @@
     </thead>
     <tbody>
         @{
-            foreach (var item in this.Model.Data)
+            foreach (var item in this.Model!.Data)
             {
                 <tr>
                     <td>@item.Date</td>
@@ -40,7 +40,7 @@
                         @{ if (item != null && item.Nested != null)
                             {<text>@item.Nested.TextNested.HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(2).First().SearchTerm)</text>} }
                     </td>
-                    <td>@string.Join(", ", item.CollectionComplex.Select(i => i.TextNested)).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(3).First().SearchTerm)</td>
+                    <td>@string.Join(", ", item!.CollectionComplex.Select(i => i.TextNested)).HighlightKeyWords(this.Model.SearchCriteria.OfType<GenericSearch.Core.TextSearch>().Skip(3).First().SearchTerm)</td>
                 </tr>
             }
         }

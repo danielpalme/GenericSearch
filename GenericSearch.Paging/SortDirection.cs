@@ -1,14 +1,13 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GenericSearch.Paging
-{
-    [DataContract]
-    public enum SortDirection
-    {
-        [EnumMember]
-        Ascending,
+namespace GenericSearch.Paging;
 
-        [EnumMember]
-        Descending
-    }
+[DataContract]
+public enum SortDirection
+{
+    [EnumMember]
+    Ascending,
+
+    [EnumMember]
+    Descending
 }

@@ -24,7 +24,7 @@
     </thead>
     <tbody>
         @{
-            foreach (var item in this.Model.Data)
+            foreach (var item in this.Model!.Data)
             {
                 <tr>
                     <td>@item.Date</td>

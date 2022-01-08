@@ -42,7 +42,7 @@
         </div>
     </div>
 </form>
-@if (this.Model.Terms != null && this.Model.Terms.Any())
+@if (this.Model!.Terms != null && this.Model.Terms.Any())
 {
     string text = string.Join(", ", this.Model.Terms);
 
@@ -61,7 +61,7 @@
             foreach (var item in this.Model.Data)
             {
                 <tr>
-                    <td>@item.Text.HighlightKeyWords(this.Model.Terms)</td>
+                    <td>@item.Text.HighlightKeyWords(this.Model.Terms!)</td>
                 </tr>
             }
         }
