@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using GenericSearch.Data;
+﻿using GenericSearch.Data;
 using Xunit;
 
 namespace GenericSearch.Core;
