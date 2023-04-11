@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GenericSearch.Common\GenericSearch.Common.csproj" />
     <ProjectReference Include="..\GenericSearch.Core\GenericSearch.Core.csproj" />
     <ProjectReference Include="..\GenericSearch.Data\GenericSearch.Data.csproj" />
