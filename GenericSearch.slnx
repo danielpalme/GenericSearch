@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Grammar/">
+    <Project Path="GenericSearch.Common/GenericSearch.Common.csproj" />
+    <Project Path="GenericSearch.Grammar.Test/GenericSearch.Grammar.Test.csproj" />
+    <Project Path="GenericSearch.Grammar/GenericSearch.Grammar.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="stylecop.ruleset" />
+  </Folder>
+  <Project Path="GenericSearch.Core.Test/GenericSearch.Core.Test.csproj" />
+  <Project Path="GenericSearch.Core/GenericSearch.Core.csproj" />
+  <Project Path="GenericSearch.Data/GenericSearch.Data.csproj" />
+  <Project Path="GenericSearch.Paging/GenericSearch.Paging.csproj" />
+  <Project Path="GenericSearch.UI/GenericSearch.UI.csproj" />
+</Solution>
